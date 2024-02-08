@@ -12,7 +12,11 @@ public class PlayerMovement : MonoBehaviour
     private float horizontal;
     private float speed = 2f;
     private float jumpingPower = 4f;
-    private bool isFaceingRight = true;
+    private bool isFacingRight = true;
+
+    private float dodgeSpeed = 7f;
+    private bool dodgeAvailable = true;
+    private bool isDodging;
 
     // Start is called before the first frame update
     void Start()
@@ -23,14 +27,28 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+        if (!isDodging)
+        {
+            rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+        }
 
+        if (isDodging)
+        {
+            if (!isFacingRight)
+            {
+                rb.velocity = new Vector2(-dodgeSpeed, rb.velocity.y);
+            }
+            else if (isFacingRight)
+            {
+                rb.velocity = new Vector2(dodgeSpeed, rb.velocity.y);
+            }
+        }
 
-        if (!isFaceingRight && horizontal > 0f)
+        if (!isFacingRight && horizontal > 0f)
         {
             Flip();
         }
-        else if(isFaceingRight && horizontal < 0f)
+        else if(isFacingRight && horizontal < 0f)
         {
             Flip();
         }
@@ -54,10 +72,31 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Flip()
     {
-        isFaceingRight = !isFaceingRight;
+        isFacingRight = !isFacingRight;
         Vector3 localScale = transform.localScale;
         localScale.x *= -1f;
         transform.localScale = localScale;
+    }
+
+    public void Attack (InputAction.CallbackContext context)
+    {
+        //todo
+    }
+
+    public void Dodge (InputAction.CallbackContext context)
+    {
+        if(context.performed && dodgeAvailable)
+        {
+            isDodging = true;
+            dodgeAvailable = false;
+        }
+        IEnumerator DodgeTimerCoroutine()
+        {
+            yield return new WaitForSeconds(.1f);// Wait a sec
+            isDodging = false;
+            dodgeAvailable = true;
+        }
+        StartCoroutine(DodgeTimerCoroutine());
     }
     public void Move (InputAction.CallbackContext context)
     {
