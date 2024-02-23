@@ -94,7 +94,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5263318199318816680}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28f6c87fd233fa14fb595fc5fe48d5df, type: 3}
+  m_Script: {fileID: 11500000, guid: 4fe16db58eb435e40a5098c24185ac49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 5263318199318816677}
@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 9ffb0003796b8844bbad35fc57b0e1f6, type: 3}
+  m_Actions: {fileID: -944628639613478452, guid: dadbeca18519bca4ea16d8ffcded5c41, type: 3}
   m_NotificationBehavior: 2
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
@@ -362,7 +362,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: e5312dc66e2289c4cb85875098a3d0ad, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cba03827c77ca1a4aa63082eba7d2122, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
