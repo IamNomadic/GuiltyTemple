@@ -680,6 +680,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerObject
       objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: speed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: dodgeSpeed
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: jumpingPower
+      value: 2.7
+      objectReference: {fileID: 0}
     - target: {fileID: 7424941145785508664, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
       propertyPath: attackRange
       value: 0.2

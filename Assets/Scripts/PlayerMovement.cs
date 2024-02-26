@@ -5,15 +5,18 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+	
     public Rigidbody2D rb;
     public Transform groundCheck;
     public LayerMask groundLayer;
     
     private float horizontal;
+[SerializeField]
     private float speed = 2f;
+[SerializeField]
     private float jumpingPower = 4f;
     private bool isFacingRight = true;
-
+[SerializeField]
     private float dodgeSpeed = 7f;
     private bool dodgeAvailable = true;
     private bool isDodging;

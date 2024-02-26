@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class PlayerCombat : MonoBehaviour
 {
     public Transform attackPoint;
+[SerializeField]
     public float attackRange = 0.2f; //feel free to change the attack range too, not sure how much range were giving him at the base state
     public LayerMask enemyLayers;
     
