@@ -9,8 +9,10 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody2D rb;
     public Transform groundCheck;
     public LayerMask groundLayer;
+    public Animator animator;
     
     private float horizontal;
+    private float vertical;
 [SerializeField]
     private float speed = 2f;
 [SerializeField]
@@ -28,8 +30,11 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
+	animator.SetFloat("Speed", Mathf.Abs(horizontal));
+	animator.SetFloat("SpeedY", Mathf.Abs(rb.velocity.y));
+
         if (!isDodging)
         {
             rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
@@ -59,6 +64,7 @@ public class PlayerMovement : MonoBehaviour
     }
     public void jump(InputAction.CallbackContext context)
     {
+
         if (context.performed && IsGrounded())
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
@@ -71,6 +77,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsGrounded()
     {
+	 
         return Physics2D.OverlapCircle(groundCheck.position, 0.1f, groundLayer);
     }
     private void Flip()
@@ -89,12 +96,14 @@ public class PlayerMovement : MonoBehaviour
         {
             isDodging = true;
             dodgeAvailable = false;
+	    animator.SetBool("IsDashing", true);
         }
         IEnumerator DodgeTimerCoroutine()
         {
-            yield return new WaitForSeconds(.1f);// Wait a sec
+            yield return new WaitForSeconds(.2f);// Wait a sec
             isDodging = false;
             dodgeAvailable = true;
+	    animator.SetBool("IsDashing", false);
         }
         StartCoroutine(DodgeTimerCoroutine());
     }
@@ -102,4 +111,11 @@ public class PlayerMovement : MonoBehaviour
     {
         horizontal = context.ReadValue<Vector2>().x;
     }
+    public void Transform (InputAction.CallbackContext context)
+	{
+	if(context.performed)
+		{
+		animator.SetBool("VTransforming", true);
+		}
+	}
 }
