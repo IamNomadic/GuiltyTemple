@@ -7,28 +7,42 @@ public class PlayerCombat : MonoBehaviour
 {
     public Animator animator;
     public Transform attackPoint;
-[SerializeField]
-    public float attackRange = 0.2f; //feel free to change the attack range too, not sure how much range were giving him at the base state
+    [SerializeField]
+    public float attackRange = 0.2f;
     public LayerMask enemyLayers;
-    
-    public void Attack(InputAction.CallbackContext context)
+    public PlayerInputs playerInputs;
+    private InputAction attack;
+
+    private void Awake()
     {
-        if(context.performed)
+        playerInputs = new PlayerInputs();
+    }
+    private void OnEnable()
+    {
+        attack = playerInputs.Player.Attack;
+        attack.Enable();
+    }
+    private void FixedUpdate()
+    {
+        if(attack.triggered)
         {
+            Attack();
+        }
+    }
+    public void Attack()
+    {
 	    animator.SetBool("IsAttacking", true);
 	    StartCoroutine(AttackDelay());
             
-            Debug.Log("Attackstarted");
-	    
-        }
+        Debug.Log("Attackstarted"); 
     }
     IEnumerator AttackDelay()
     {	 
-	yield return new WaitForSeconds(0.35f);
-	AttackMechanic();
-	yield return new WaitForSeconds(0.35f);
+	    yield return new WaitForSeconds(0.35f);
+	    AttackMechanic();
+	    yield return new WaitForSeconds(0.35f);
 
-	animator.SetBool("IsAttacking", false);
+	    animator.SetBool("IsAttacking", false);
     }
     void AttackMechanic()
     {
