@@ -5,11 +5,28 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+<<<<<<< Updated upstream:GuiltyTemple/Assets/Scripts/PlayerMovement.cs
     public Rigidbody2D rb;
     public Transform groundCheck;
     public LayerMask groundLayer;
     
     private float horizontal;
+=======
+	
+    public Rigidbody2D Rigidbody;
+    public Transform GroundCheck;
+    public LayerMask GroundLayer;
+    public Animator Animator;
+    
+    public PlayerInputs PlayerControls;
+    private InputAction move;
+    private InputAction jump;
+    
+    private float horizontal;
+    private float vertical;
+    Vector2 moveDirection = Vector2.zero;
+[SerializeField]
+>>>>>>> Stashed changes:Assets/Scripts/PlayerMovement.cs
     private float speed = 2f;
     private float jumpingPower = 4f;
     private bool isFacingRight = true;
@@ -18,29 +35,46 @@ public class PlayerMovement : MonoBehaviour
     private bool dodgeAvailable = true;
     private bool isDodging;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-        
+        PlayerControls = new PlayerInputs();
+    }
+    private void OnEnable()
+    {
+        move = PlayerControls.Player.Move;
+        move.Enable();
+        jump = PlayerControls.Player.Jump;
+        jump.Enable();
+    }
+    private void OnDisable()
+    {
+        move.Disable();
+        jump.Disable();
     }
 
     // Update is called once per frame
     void Update()
     {
+<<<<<<< Updated upstream:GuiltyTemple/Assets/Scripts/PlayerMovement.cs
+=======
+	Animator.SetFloat("Speed", Mathf.Abs(horizontal));
+	Animator.SetFloat("SpeedY", Mathf.Abs(Rigidbody.velocity.y));
+
+>>>>>>> Stashed changes:Assets/Scripts/PlayerMovement.cs
         if (!isDodging)
         {
-            rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+            Rigidbody.velocity = new Vector2(horizontal * speed, Rigidbody.velocity.y);
         }
 
         if (isDodging)
         {
             if (!isFacingRight)
             {
-                rb.velocity = new Vector2(-dodgeSpeed, rb.velocity.y);
+                Rigidbody.velocity = new Vector2(-dodgeSpeed, Rigidbody.velocity.y);
             }
             else if (isFacingRight)
             {
-                rb.velocity = new Vector2(dodgeSpeed, rb.velocity.y);
+                Rigidbody.velocity = new Vector2(dodgeSpeed, Rigidbody.velocity.y);
             }
         }
 
@@ -54,21 +88,31 @@ public class PlayerMovement : MonoBehaviour
         }
 
     }
-    public void jump(InputAction.CallbackContext context)
+    public void Jump()
     {
+<<<<<<< Updated upstream:GuiltyTemple/Assets/Scripts/PlayerMovement.cs
         if (context.performed && IsGrounded())
+=======
+
+        if (jump.triggered && IsGrounded())
+>>>>>>> Stashed changes:Assets/Scripts/PlayerMovement.cs
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+            Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, jumpingPower);
         }
-        if (context.canceled && rb.velocity.y > 0f)
+        if (!jump.triggered && Rigidbody.velocity.y > 0f)
         {
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
+            Rigidbody.velocity = new Vector2(Rigidbody.velocity.x, Rigidbody.velocity.y * 0.5f);
         }
     }
 
     private bool IsGrounded()
     {
+<<<<<<< Updated upstream:GuiltyTemple/Assets/Scripts/PlayerMovement.cs
         return Physics2D.OverlapCircle(groundCheck.position, 0.1f, groundLayer);
+=======
+	 
+        return Physics2D.OverlapCircle(GroundCheck.position, 0.1f, GroundLayer);
+>>>>>>> Stashed changes:Assets/Scripts/PlayerMovement.cs
     }
     private void Flip()
     {
@@ -86,17 +130,35 @@ public class PlayerMovement : MonoBehaviour
         {
             isDodging = true;
             dodgeAvailable = false;
+<<<<<<< Updated upstream:GuiltyTemple/Assets/Scripts/PlayerMovement.cs
+=======
+	    Animator.SetBool("IsDashing", true);
+>>>>>>> Stashed changes:Assets/Scripts/PlayerMovement.cs
         }
         IEnumerator DodgeTimerCoroutine()
         {
             yield return new WaitForSeconds(.1f);// Wait a sec
             isDodging = false;
             dodgeAvailable = true;
+<<<<<<< Updated upstream:GuiltyTemple/Assets/Scripts/PlayerMovement.cs
+=======
+	    Animator.SetBool("IsDashing", false);
+>>>>>>> Stashed changes:Assets/Scripts/PlayerMovement.cs
         }
         StartCoroutine(DodgeTimerCoroutine());
     }
-    public void Move (InputAction.CallbackContext context)
+    public void Move()
     {
-        horizontal = context.ReadValue<Vector2>().x;
+        moveDirection = move.ReadValue<Vector2>();
     }
+<<<<<<< Updated upstream:GuiltyTemple/Assets/Scripts/PlayerMovement.cs
+=======
+    public void Transform (InputAction.CallbackContext context)
+	{
+	if(context.performed)
+		{
+		Animator.SetBool("VTransforming", true);
+		}
+	}
+>>>>>>> Stashed changes:Assets/Scripts/PlayerMovement.cs
 }
