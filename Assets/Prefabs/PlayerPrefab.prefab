@@ -14,9 +14,10 @@ GameObject:
   - component: {fileID: 5263318199318816682}
   - component: {fileID: 7424941145785508664}
   - component: {fileID: 5263318199318816683}
+  - component: {fileID: 4995625788966464809}
   m_Layer: 0
   m_Name: PlayerPrefab
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -103,8 +104,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   animator: {fileID: 0}
-  speed: 2
-  jumpingPower: 4
+  speed: 4
+  jumpingPower: 12
   dodgeSpeed: 7
 --- !u!114 &7424941145785508664
 MonoBehaviour:
@@ -118,6 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdd1ce730c1560e42902adb89c7baf59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 0}
   attackPoint: {fileID: 4714489394030942717}
   attackRange: 0.5
   enemyLayers:
@@ -256,11 +258,29 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 92ebb9ff-1977-4b47-ab1b-809c6182a410
     m_ActionName: Player/Dodge[/Keyboard/ctrl]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 305936a5-ae21-4508-b1e2-3407315855de
+    m_ActionName: Player/Transform[/Keyboard/1]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &4995625788966464809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5263318199318816680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0349e692f47e12429e607a9abe4d20c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 6
+  currentHealth: 6
 --- !u!1 &5263318199331163408
 GameObject:
   m_ObjectHideFlags: 0

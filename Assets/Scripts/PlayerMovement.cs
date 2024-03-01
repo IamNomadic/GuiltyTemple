@@ -60,18 +60,40 @@ public class PlayerMovement : MonoBehaviour
         {
             Flip();
         }
+	///// Temporary input code
+	if (Input.GetKeyDown(KeyCode.Q))
+	{
+	animator.SetBool("WTransforming", true);
+	}
+	if (Input.GetKeyDown(KeyCode.E))
+	{
+	animator.SetBool("VTransforming", true);
+	}
+	if (Input.GetKeyDown(KeyCode.F))
+	{
+	animator.SetBool("VTransforming", false);
+	animator.SetBool("WTransforming", false);
+	}
+	////////
+
+	if (IsGrounded())
+	{
+	animator.SetBool("IsJumping", false);
+	}
 
     }
     public void jump(InputAction.CallbackContext context)
     {
-
+	    animator.SetBool("IsJumping", true);
         if (context.performed && IsGrounded())
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+	    animator.SetBool("IsJumping", true);
         }
         if (context.canceled && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
+	    animator.SetBool("IsJumping", true);
         }
     }
 
@@ -111,11 +133,5 @@ public class PlayerMovement : MonoBehaviour
     {
         horizontal = context.ReadValue<Vector2>().x;
     }
-    public void Transform (InputAction.CallbackContext context)
-	{
-	if(context.performed)
-		{
-		animator.SetBool("VTransforming", true);
-		}
-	}
+
 }
