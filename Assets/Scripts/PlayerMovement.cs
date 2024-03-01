@@ -5,31 +5,51 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-	
+    #region Public Variables
     public Rigidbody2D rb;
     public Transform groundCheck;
     public LayerMask groundLayer;
-    
+    public Animator animator;
+    public PlayerInputs playerInputs;
+    #endregion
+    #region Private Variables
     private float horizontal;
-[SerializeField]
+    private float vertical;
+    [SerializeField]
     private float speed = 2f;
-[SerializeField]
+    [SerializeField]
     private float jumpingPower = 4f;
     private bool isFacingRight = true;
-[SerializeField]
+    [SerializeField]
     private float dodgeSpeed = 7f;
     private bool dodgeAvailable = true;
     private bool isDodging;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private InputAction move;
+    private InputAction jump;
+    #endregion
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
+        playerInputs = new PlayerInputs();
+    }
+    private void OnEnable()
+    {
+        move = playerInputs.Player.Move;
+        move.Enable();
+        jump = playerInputs.Player.Jump;
+        jump.Enable();
+    }
+    private void OnDisable()
+    {
+        move.Disable();
+        jump.Disable();
+    }
+    void FixedUpdate()
+    {
+	    animator.SetFloat("Speed", Mathf.Abs(horizontal));
+	    animator.SetFloat("SpeedY", Mathf.Abs(rb.velocity.y));
+
         if (!isDodging)
         {
             rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
@@ -55,22 +75,51 @@ public class PlayerMovement : MonoBehaviour
         {
             Flip();
         }
+        if (jump.triggered && IsGrounded())
+            Jump();
+	    ///// Temporary input code
+	    if (Input.GetKeyDown(KeyCode.Q))
+	    {
+	        animator.SetBool("WTransforming", true);
+	    }
+	    if (Input.GetKeyDown(KeyCode.E))
+	    {
+	        animator.SetBool("VTransforming", true);
+	    }
+	    if (Input.GetKeyDown(KeyCode.F))
+	    {
+	        animator.SetBool("VTransforming", false);
+	        animator.SetBool("WTransforming", false);
+	    }   
+	    ////////
+
+	    if (IsGrounded())
+	    {
+	        animator.SetBool("IsJumping", false);
+	    }
 
     }
-    public void jump(InputAction.CallbackContext context)
+    //uhh the animation wont trigger and idk why but the function works
+    public void Jump()
     {
-        if (context.performed && IsGrounded())
+	    animator.SetBool("IsJumping", true);
+        rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+        /*if (context.performed && IsGrounded())
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+	    animator.SetBool("IsJumping", true);
         }
         if (context.canceled && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
-        }
+	    animator.SetBool("IsJumping", true);
+        }*/
+        animator.SetBool("IsJumping", false);
     }
 
     private bool IsGrounded()
     {
+	 
         return Physics2D.OverlapCircle(groundCheck.position, 0.1f, groundLayer);
     }
     private void Flip()
@@ -89,17 +138,21 @@ public class PlayerMovement : MonoBehaviour
         {
             isDodging = true;
             dodgeAvailable = false;
+	        animator.SetBool("IsDashing", true);
         }
         IEnumerator DodgeTimerCoroutine()
         {
-            yield return new WaitForSeconds(.1f);// Wait a sec
+            yield return new WaitForSeconds(.2f);// Wait a sec
             isDodging = false;
             dodgeAvailable = true;
+	        animator.SetBool("IsDashing", false);
         }
         StartCoroutine(DodgeTimerCoroutine());
     }
     public void Move (InputAction.CallbackContext context)
     {
         horizontal = context.ReadValue<Vector2>().x;
+        
     }
+
 }
