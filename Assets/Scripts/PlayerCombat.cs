@@ -22,40 +22,36 @@ public class PlayerCombat : MonoBehaviour
         attack = playerInputs.Player.Attack;
         attack.Enable();
     }
+    private void OnDisable()
+    {
+        attack.Disable();
+    }
     private void FixedUpdate()
     {
-        if(attack.triggered)
+        if (attack.triggered)
         {
-            Attack();
+            Debug.Log("attack attempted");
+            Attack(); 
         }
     }
-    public void Attack()
-    {
-	    animator.SetBool("IsAttacking", true);
-	    StartCoroutine(AttackDelay());
-            
-        Debug.Log("Attackstarted"); 
-    }
-    IEnumerator AttackDelay()
-    {	 
-	    yield return new WaitForSeconds(0.35f);
-	    AttackMechanic();
-	    yield return new WaitForSeconds(0.35f);
 
-	    animator.SetBool("IsAttacking", false);
-    }
-    void AttackMechanic()
+    private void Attack()
     {
-	
-        //we cna put an attack animation here later if we make one
+        animator.SetBool("IsAttacking", true);
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
-        foreach(Collider2D enemy in hitEnemies)
+        foreach (Collider2D enemy in hitEnemies)
         {
             Debug.Log(enemy.name + " was hit.");
+            //damage enemies here
         }
-
-        //damaging enemies later we need to make the enemies first
+        
+        IEnumerator AttackWaitTime()
+        {
+            yield return new WaitForSeconds(0.5f);
+            animator.SetBool("IsAttacking", false);
+        }
+        StartCoroutine(AttackWaitTime());
     }
     void OnDrawGizmosSelected()
     {

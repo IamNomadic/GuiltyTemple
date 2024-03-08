@@ -95,26 +95,22 @@ public class PlayerMovement : MonoBehaviour
 
 	    if (IsGrounded())
 	    {
-	        animator.SetBool("IsJumping", false);
-	    }
+            
+
+        }
 
     }
-    //uhh the animation wont trigger and idk why but the function works
+    
     public void Jump()
     {
 	    animator.SetBool("IsJumping", true);
         rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
-        /*if (context.performed && IsGrounded())
+        IEnumerator JumpWaitTime()
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
-	    animator.SetBool("IsJumping", true);
+            yield return new WaitForSeconds(0.1f);
+            animator.SetBool("IsJumping", false);
         }
-        if (context.canceled && rb.velocity.y > 0f)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
-	    animator.SetBool("IsJumping", true);
-        }*/
-        animator.SetBool("IsJumping", false);
+        StartCoroutine(JumpWaitTime());
     }
 
     private bool IsGrounded()
