@@ -28,21 +28,16 @@ public class PlayerCombat : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        
-        if(attack.triggered)
+        if (attack.triggered)
         {
             Debug.Log("attack attempted");
-            animator.SetBool("IsAttacking", true);
-            StartCoroutine(Attack(0.35f));
-            
+            Attack(); 
         }
-        animator.SetBool("IsAttacking", false);
-
     }
 
-    IEnumerator Attack(float time)
+    private void Attack()
     {
-        
+        animator.SetBool("IsAttacking", true);
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
         foreach (Collider2D enemy in hitEnemies)
@@ -51,10 +46,13 @@ public class PlayerCombat : MonoBehaviour
             //damage enemies here
         }
         
-
-        yield return new WaitForSeconds(0.25f);  
+        IEnumerator AttackWaitTime()
+        {
+            yield return new WaitForSeconds(0.5f);
+            animator.SetBool("IsAttacking", false);
+        }
+        StartCoroutine(AttackWaitTime());
     }
-    
     void OnDrawGizmosSelected()
     {
         if (attackPoint == null)
