@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class MeleeEnemy : MonoBehaviour
 {
     [SerializeField]
     private BoxCollider2D enemyCollider;
@@ -33,7 +33,7 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
-        enemyCurrentHealth = 10;
+        enemyCurrentHealth = 1;
     }
     private void FixedUpdate()
     {
@@ -56,19 +56,20 @@ public class Enemy : MonoBehaviour
     //player damages enemy
     public void TakeDamage(int damage)
     {
-        enemyCurrentHealth = damage;
+        enemyCurrentHealth -= damage;
 
         //damage taking aniamtion
 
         if(enemyCurrentHealth <= 0)
         {
-
+            Die();
         }
     }
     void Die()
     {
         //enemy death aniamtion
-
+        Debug.Log("AUUUUUUUUUGUHHHGUHUHHH");
+        Destroy(gameObject);
 
     }
     //the code here is so ugly im sorry

@@ -44,9 +44,10 @@ public class PlayerCombat : MonoBehaviour
         foreach (Collider2D enemy in hitEnemies)
         {
             Debug.Log(enemy.name + " was hit.");
-            //damage enemies here
-            enemy.GetComponent<Enemy>().TakeDamage(playerATKDamage);
-
+            
+            enemy.GetComponent<MeleeEnemy>().TakeDamage(playerATKDamage);
+            //change later to include all enemy types
+            //note to self(damien): try making a base enemy class and have enemy types as children
         }
         
         IEnumerator AttackWaitTime()
