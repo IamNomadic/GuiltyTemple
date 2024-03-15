@@ -1,55 +1,114 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    #region Public Variables
+	
     public Rigidbody2D rb;
     public Transform groundCheck;
     public LayerMask groundLayer;
     public Animator animator;
-    public PlayerInputs playerInputs;
-    #endregion
-    #region Private Variables
+    #region transformationVariables
+    bool VTransformed;
+    bool WTransformed;
+
+    [SerializeField]
+    public float transformCooldown;
+    #endregion 
+
+    #region MovmentVariables
     private float horizontal;
     private float vertical;
     [SerializeField]
     private float speed = 2f;
     [SerializeField]
     private float jumpingPower = 4f;
-    private bool isFacingRight = true;
     [SerializeField]
     private float dodgeSpeed = 7f;
     private bool dodgeAvailable = true;
-    private bool isDodging;
 
-    private InputAction move;
-    private InputAction jump;
+    private bool isFacingRight = true;
+    [SerializeField]
+    private bool isDodging, isJumping;
     #endregion
 
-    private void Awake()
-    {
-        playerInputs = new PlayerInputs();
-    }
-    private void OnEnable()
-    {
-        move = playerInputs.Player.Move;
-        move.Enable();
-        jump = playerInputs.Player.Jump;
-        jump.Enable();
-    }
-    private void OnDisable()
-    {
-        move.Disable();
-        jump.Disable();
-    }
-    void FixedUpdate()
-    {
-	    animator.SetFloat("Speed", Mathf.Abs(horizontal));
-	    animator.SetFloat("SpeedY", Mathf.Abs(rb.velocity.y));
 
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        isJumping = false;
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        //transform cooldown increment
+       if(transformCooldown>0)
+        {
+            transformCooldown = transformCooldown - Time.deltaTime;
+        }
+
+       //checks your form and the cooldown and automatically detransition you
+        if (transformCooldown <= 0 && VTransformed == true)
+        {
+            VTransformed = false;
+
+            animator.Play("VDetrans");
+            //Base form movment values
+            dodgeSpeed = 2.5f;
+            jumpingPower = 3.4f;
+            speed = 1f;
+        }
+        if (transformCooldown <= 0 && WTransformed == true)
+        {
+            WTransformed = false;
+
+            animator.Play("WDetrans");
+            //Base form movment values
+
+            dodgeSpeed = 2.5f;
+            jumpingPower = 3.4f;
+            speed = 1f;
+        }
+        #region animations
+
+
+        //Animations
+        if (isJumping)
+        {
+            animator.Play("Jump");
+
+        }
+
+        if (horizontal > 0.1 && isJumping == false || horizontal < -0.1 && isJumping == false)
+        {
+            animator.Play("Run");
+        }
+
+        #endregion
+
+
+
+        #region Flip Code
+        if (!isFacingRight && horizontal > 0f)
+        {
+            Flip();
+        }
+        else if (isFacingRight && horizontal < 0f)
+        {
+            Flip();
+        }
+
+        #endregion
+        
+
+
+        #region Dodge Code
         if (!isDodging)
         {
             rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
@@ -66,58 +125,36 @@ public class PlayerMovement : MonoBehaviour
                 rb.velocity = new Vector2(dodgeSpeed, rb.velocity.y);
             }
         }
-
-        if (!isFacingRight && horizontal > 0f)
-        {
-            Flip();
-        }
-        else if(isFacingRight && horizontal < 0f)
-        {
-            Flip();
-        }
-        if (jump.triggered && IsGrounded())
-            Jump();
-	    ///// Temporary input code
-	    if (Input.GetKeyDown(KeyCode.Q))
-	    {
-	        animator.SetBool("WTransforming", true);
-	    }
-	    if (Input.GetKeyDown(KeyCode.E))
-	    {
-	        animator.SetBool("VTransforming", true);
-	    }
-	    if (Input.GetKeyDown(KeyCode.F))
-	    {
-	        animator.SetBool("VTransforming", false);
-	        animator.SetBool("WTransforming", false);
-	    }   
-	    ////////
-
-	    if (IsGrounded())
-	    {
-            
-
-        }
-
-    }
+        #endregion
     
-    public void Jump()
-    {
-	    animator.SetBool("IsJumping", true);
-        rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
-        IEnumerator JumpWaitTime()
+
+
+        #region Grounded Code
+
+        if (IsGrounded() && isJumping == true)
         {
-            yield return new WaitForSeconds(0.1f);
-            animator.SetBool("IsJumping", false);
+            Debug.Log("Ground");
+            isJumping = false;
         }
-        StartCoroutine(JumpWaitTime());
+
+        #endregion // problem currently where it sets grounded right after jumping
+        
+    }
+    private void FixedUpdate()
+    {
+        
+
     }
 
-    private bool IsGrounded()
+    public void Move(Vector2 context)
     {
-	 
-        return Physics2D.OverlapCircle(groundCheck.position, 0.1f, groundLayer);
+        
+        horizontal = context.x;
+        vertical = context.y;
     }
+
+
+
     private void Flip()
     {
         isFacingRight = !isFacingRight;
@@ -126,29 +163,95 @@ public class PlayerMovement : MonoBehaviour
         transform.localScale = localScale;
     }
 
+
+
+    public void Jump()
+    {
+        
+
+        if (IsGrounded())
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+            isJumping = true;
+        }
+    }
+
+     
+       
+    public void JumpCanceled()
+    {
+        Debug.Log("canceled");
+
+        if (rb.velocity.y > 0f)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
+
+            }
+        
+    }
+  
     
 
-    public void Dodge (InputAction.CallbackContext context)
+    private bool IsGrounded()
     {
-        if(context.performed && dodgeAvailable)
+
+        return Physics2D.OverlapCircle(groundCheck.position, 0.1f, groundLayer);
+    }
+                        
+
+
+    public void Dodge ()
+    {
+        Debug.Log("Dodge!");
+        if(dodgeAvailable)
         {
             isDodging = true;
             dodgeAvailable = false;
-	        animator.SetBool("IsDashing", true);
+            animator.Play("Dash");
         }
         IEnumerator DodgeTimerCoroutine()
         {
             yield return new WaitForSeconds(.2f);// Wait a sec
             isDodging = false;
             dodgeAvailable = true;
-	        animator.SetBool("IsDashing", false);
+	   
         }
         StartCoroutine(DodgeTimerCoroutine());
     }
-    public void Move (InputAction.CallbackContext context)
-    {
-        horizontal = context.ReadValue<Vector2>().x;
+       
         
+        
+    public void VTransform()
+    {
+        if (transformCooldown <= 0)
+        {
+            VTransformed = true;
+            Debug.Log("Vtransform");
+            animator.Play("Transform");
+            transformCooldown = 5;
+            //vampire movment values
+            dodgeSpeed = 5;
+            jumpingPower = 4.4f;
+            speed = 1.5f;
+            
+        }
+    }
+
+
+
+    public void WTransform()
+    {
+        if (transformCooldown <= 0)
+        {
+            WTransformed = true;
+            Debug.Log("Wtransform");
+            animator.Play("Transform 0");
+            transformCooldown = 5;
+            //wolf movement values
+            dodgeSpeed = 2;
+            jumpingPower = 3.4f;
+            speed = 0.7f;
+        }
     }
 
 }
