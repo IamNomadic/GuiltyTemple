@@ -99,13 +99,13 @@ MonoBehaviour:
   enemyCollider: {fileID: 6736655369541130576}
   playerHealth: {fileID: 0}
   enemyMaxHealth: 0
-  detectionRange: 2.78
+  detectionRange: 0.25
   colliderDistance: 0.24
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
   damage: 0
-  attackCooldown: 0
+  attackCooldown: 1
 --- !u!114 &6264927725701742733
 MonoBehaviour:
   m_ObjectHideFlags: 0

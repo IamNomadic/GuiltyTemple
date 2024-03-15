@@ -45,9 +45,7 @@ public class PlayerCombat : MonoBehaviour
         {
             Debug.Log(enemy.name + " was hit.");
             
-            enemy.GetComponent<MeleeEnemy>().TakeDamage(playerATKDamage);
-            //change later to include all enemy types
-            //note to self(damien): try making a base enemy class and have enemy types as children
+            enemy.GetComponent<Enemy>().TakeDamage(playerATKDamage);
         }
         
         IEnumerator AttackWaitTime()

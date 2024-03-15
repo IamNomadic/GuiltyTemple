@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MeleeEnemy : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
+    //note to self; enemy class > enemy types will be children with variables like damage, health, range, etc changed
     [SerializeField]
     private BoxCollider2D enemyCollider;
     [SerializeField]
@@ -34,6 +35,7 @@ public class MeleeEnemy : MonoBehaviour
     private void Start()
     {
         enemyCurrentHealth = 1;
+        
     }
     private void FixedUpdate()
     {
@@ -41,7 +43,9 @@ public class MeleeEnemy : MonoBehaviour
         if( PlayerInSight() && cooldownTimer >= attackCooldown)
         {
             cooldownTimer = 0;
+              
             DamagePlayer();
+            Debug.Log("you were hit");
             //add attack animation and adjust timing so damage function is done in time with attack
         }
     }
@@ -69,21 +73,17 @@ public class MeleeEnemy : MonoBehaviour
     {
         //enemy death aniamtion
         Debug.Log("AUUUUUUUUUGUHHHGUHUHHH");
-        Destroy(gameObject);
-
+        Destroy(gameObject); //or disable not sure which is better
     }
-    //the code here is so ugly im sorry
+    
     private bool PlayerInSight()
     {
-        RaycastHit2D hit = Physics2D.BoxCast(enemyCollider.bounds.center + colliderDistance * detectionRange * transform.localScale.x * transform.right, 
-            new Vector3(enemyCollider.bounds.size.x * detectionRange, enemyCollider.bounds.size.y, enemyCollider.bounds.size.z),
-            0, Vector2.left, 0, playerLayer);
+        RaycastHit2D hit = Physics2D.CircleCast(enemyCollider.bounds.center, detectionRange, Vector2.right, 0, playerLayer);
         return hit.collider != null;
     }
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(enemyCollider.bounds.center + colliderDistance * detectionRange * transform.localScale.x * transform.right,
-            new Vector3(enemyCollider.bounds.size.x * detectionRange, enemyCollider.bounds.size.y, enemyCollider.bounds.size.z));
+        Gizmos.DrawWireSphere(enemyCollider.bounds.center, detectionRange);
     }
 }
