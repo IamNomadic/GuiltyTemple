@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 4995625788966464809}
   - component: {fileID: 2772621927967051651}
   - component: {fileID: 1802627099756341777}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PlayerPrefab
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -366,7 +366,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5263318199331163411}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GroundCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -397,7 +397,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4714489394030942717}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AttackPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
