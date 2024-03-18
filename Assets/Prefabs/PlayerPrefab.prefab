@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 7424941145785508664}
   - component: {fileID: 5263318199318816683}
   - component: {fileID: 4995625788966464809}
+  - component: {fileID: 5625559437601002640}
   m_Layer: 0
   m_Name: PlayerPrefab
   m_TagString: Player
@@ -104,12 +105,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   animator: {fileID: 0}
+  playerCombat: {fileID: 0}
+  transformCooldown: 0
   speed: 4
   jumpingPower: 12
   dodgeSpeed: 7
   isDodging: 0
   isJumping: 0
-  transformCooldown: 0
 --- !u!114 &7424941145785508664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,7 +126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 0}
   attackPoint: {fileID: 4714489394030942717}
-  attackRange: 0.5
+  attackRange: 0.2
   enemyLayers:
     serializedVersion: 2
     m_Bits: 512
@@ -286,9 +288,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0349e692f47e12429e607a9abe4d20c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DeathSound: {fileID: 0}
+  animator: {fileID: 0}
   maxHealth: 6
   currentHealth: 6
   healthText: {fileID: 0}
+--- !u!114 &5625559437601002640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5263318199318816680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a647611df755a14c994933f9c45a8cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5263318199331163408
 GameObject:
   m_ObjectHideFlags: 0
