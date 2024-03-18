@@ -4,13 +4,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System;
 
 public class PlayerHealth : MonoBehaviour
 {
+    public static event Action OnPlayerDamaged;
     public AudioSource DeathSound;
     public Animator animator;
     [SerializeField]
-    private int maxHealth = 6;
+    public int maxHealth = 8;
     public int currentHealth;
     [SerializeField]
     private TMP_Text healthText;
@@ -25,21 +27,27 @@ public class PlayerHealth : MonoBehaviour
     {
 
     }
-   // IEnumerator Reset ()
-   // {
-    //    yield WaitForSeconds (2);
-    //    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-   // }
+    IEnumerator LevelReset ()
+    {
+        yield return new WaitForSeconds(2);
+        Debug.Log("called");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        
+    }
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
         healthText.text = currentHealth.ToString();
+        OnPlayerDamaged?.Invoke();
         if (currentHealth <= 0)
         {
+            StartCoroutine("LevelReset");
             Debug.Log("you are dead");
-            animator.Play("Hit");
             DeathSound.Play();
-            //StartCoroutine("Reset");
-        }
+            animator.Play("Hit");
+           
+            
+
+        } 
     }
 }
