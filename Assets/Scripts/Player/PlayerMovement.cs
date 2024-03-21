@@ -35,6 +35,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private bool isDodging, isJumping;
     private bool canGroundCheck = true;
+    public bool canMove = true;
+   
 
     #endregion
 
@@ -88,64 +90,79 @@ public class PlayerMovement : MonoBehaviour
 
 
         //Animations
-        if (isJumping)
+        if (isJumping && playerCombat.isAttacking)
+        {
+            animator.Play("AirAttack");
+
+        }
+        else if (isJumping)
         {
             animator.Play("Jump");
 
         }
-
-        if (horizontal > 0.1 && isJumping == false || horizontal < -0.1 && isJumping == false)
+        if (horizontal > 0.1 && isJumping == false && playerCombat.isAttacking|| horizontal < -0.1 && isJumping == false && playerCombat.isAttacking)
+        {
+            animator.Play("Attack");
+        }
+        else if (horizontal > 0.1 && isJumping == false || horizontal < -0.1 && isJumping == false)
         {
             animator.Play("Run");
         }
 
-        #endregion
-
-
-
-        #region Flip Code
-        if (!isFacingRight && horizontal > 0f)
-        {
-            Flip();
-        }
-        else if (isFacingRight && horizontal < 0f)
-        {
-            Flip();
-        }
 
         #endregion
-        
+
+
+        if (canMove)
+        {
+            #region Flip Code
+            if (!isFacingRight && horizontal > 0f)
+            {
+                Flip();
+            }
+            else if (isFacingRight && horizontal < 0f)
+            {
+                Flip();
+            }
+        }
+        #endregion
+
 
 
         #region Dodge Code
-        if (!isDodging)
+        if (canMove)
         {
-            rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
-        }
-
-        if (isDodging)
-        {
-            if (!isFacingRight)
+            if (!isDodging)
             {
-                rb.velocity = new Vector2(-dodgeSpeed, rb.velocity.y);
+                rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
             }
-            else if (isFacingRight)
+
+            if (isDodging)
             {
-                rb.velocity = new Vector2(dodgeSpeed, rb.velocity.y);
+                if (!isFacingRight)
+                {
+                    rb.velocity = new Vector2(-dodgeSpeed, rb.velocity.y);
+                }
+                else if (isFacingRight)
+                {
+                    rb.velocity = new Vector2(dodgeSpeed, rb.velocity.y);
+                }
             }
         }
         #endregion
-    
+
 
 
         #region Grounded Code
-
-        if (IsGrounded() && isJumping == true)
+        if (canMove)
         {
-            Debug.Log("Ground");
-            isJumping = false;
+            if (IsGrounded() && isJumping == true)
+            {
+                animator.Play("Stand");
+                Debug.Log("Ground");
+                isJumping = false;
+            }
         }
-
         #endregion // problem currently where it sets grounded right after jumping
         
     }

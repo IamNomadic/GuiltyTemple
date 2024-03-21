@@ -11,11 +11,13 @@ public class PlayerHealth : MonoBehaviour
     public static event Action OnPlayerDamaged;
     public AudioSource DeathSound;
     public Animator animator;
+    public PlayerMovement pm;
     [SerializeField]
     public int maxHealth = 8;
     public int currentHealth;
     [SerializeField]
     private TMP_Text healthText;
+    public bool dead = false;
     void Start()
     {
         currentHealth = maxHealth;
@@ -31,6 +33,7 @@ public class PlayerHealth : MonoBehaviour
     {
         yield return new WaitForSeconds(2);
         Debug.Log("called");
+        dead = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         
     }
@@ -45,6 +48,8 @@ public class PlayerHealth : MonoBehaviour
             Debug.Log("you are dead");
             DeathSound.Play();
             animator.Play("Hit");
+            dead = true;
+            pm.canMove = false;
            
             
 

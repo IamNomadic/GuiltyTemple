@@ -1,15 +1,16 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
+
 
 public class PlayerHumanState : PlayerBaseState
 {
     
-
     public override void EnterState(PlayerStateManager player)
     {
-        Debug.Log("StateTest");
+        Debug.Log("StateHuman");
+        
     }
     public override void UpdateState(PlayerStateManager player)
     {
