@@ -16,7 +16,7 @@ public abstract class PlayerBaseState
     public abstract void InitializeSubState();
 
     void UpdateStates() { }
-    void SwitchState(PlayerBaseState newState)
+    protected void SwitchState(PlayerBaseState newState)
     { 
         //current state exits
         ExitState();
@@ -25,8 +25,8 @@ public abstract class PlayerBaseState
         newState.EnterState();
 
         //switch current state context
-
+        _context.CurrentState = newState;
     }
-    void SetSuperState() { }
-    void SetSubState() { }
+    protected void SetSuperState() { }
+    protected void SetSubState() { }
 }

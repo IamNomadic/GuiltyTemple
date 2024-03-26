@@ -38,6 +38,10 @@ public class PlayerStateMachine : MonoBehaviour
     #endregion
     PlayerBaseState currentState;
     PlayerStateFactory states;
+    #region Getters and Setters
+    public PlayerBaseState CurrentState {  get { return currentState; } set { currentState = value; } }
+
+    #endregion
     private void Awake()
     {
         //get all components here instead of using the inspector <3
@@ -74,8 +78,6 @@ public class PlayerStateMachine : MonoBehaviour
     }
     public void Jump()
     {
-
-
         if (IsGrounded())
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
