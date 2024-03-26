@@ -10,6 +10,12 @@ public class PlayerIdleState : PlayerBaseState
     public override void UpdateState() { }
     public override void ExitState() { }
     public override void FixedUpdateState() { }
-    public override void CheckSwitchStates() { }
+    public override void CheckSwitchStates() 
+    { 
+     //default state
+     //switch to wlak when walking
+     //jump state when jumping
+     //attacking state when attacking
+    }
     public override void InitializeSubState() { }
 }
