@@ -34,12 +34,19 @@ public class PlayerStateMachine : MonoBehaviour
     public float attackRange = 0.2f;
     public LayerMask enemyLayers;
     public bool isAttacking;
-    int playerATKDamage = 1;
+    public int playerATKDamage = 1;
     #endregion
     PlayerBaseState currentState;
     PlayerStateFactory states;
     #region Getters and Setters
     public PlayerBaseState CurrentState {  get { return currentState; } set { currentState = value; } }
+    public Transform AttackPoint { get { return attackPoint; } }
+    public PlayerHealth PlayerHealth { get { return ph; } }
+    public float AttackRange {  get { return attackRange; } }
+    public LayerMask EnemyLayers {  get { return enemyLayers; } }
+    public bool IsAttacking {  get { return isAttacking; } set {  isAttacking = value; } }
+    public int PlayerATKDamage {  get { return playerATKDamage; } }
+
 
     #endregion
     private void Awake()
@@ -107,6 +114,13 @@ public class PlayerStateMachine : MonoBehaviour
 
         return Physics2D.OverlapCircle(groundCheck.position, 0.1f, groundLayer) && canGroundCheck;
     }
+    IEnumerator DodgeTimerCoroutine()
+    {
+        yield return new WaitForSeconds(.2f);// Wait a sec
+        isDodging = false;
+        dodgeAvailable = true;
+
+    }
     public void Dodge()
     {
         Debug.Log("Dodge!");
@@ -116,14 +130,14 @@ public class PlayerStateMachine : MonoBehaviour
             dodgeAvailable = false;
             animator.Play("Dash");
         }
-        IEnumerator DodgeTimerCoroutine()
-        {
-            yield return new WaitForSeconds(.2f);// Wait a sec
-            isDodging = false;
-            dodgeAvailable = true;
-
-        }
+        
         StartCoroutine(DodgeTimerCoroutine());
+    }
+
+    IEnumerator AttackWaitTime()
+    {
+        yield return new WaitForSeconds(0.55f);
+        isAttacking = false;
     }
     public void Attack()
     {
@@ -141,11 +155,7 @@ public class PlayerStateMachine : MonoBehaviour
             enemy.GetComponent<Enemy>().TakeDamage(playerATKDamage);
         }
 
-        IEnumerator AttackWaitTime()
-        {
-            yield return new WaitForSeconds(0.55f);
-            isAttacking = false;
-        }
+        
         StartCoroutine(AttackWaitTime());
     }
     void OnDrawGizmosSelected()
