@@ -576,26 +576,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5263318199318816679, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
   m_PrefabInstance: {fileID: 5263318199544820189}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &674451759 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2527793136587767847, guid: daaa7e3c78a39324e8ddf518dd73cb1a, type: 3}
-  m_PrefabInstance: {fileID: 1378945242}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &674451764
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 674451759}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e8e4d3a0aac7754e82ba0f7ded93df6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  patrolA: {fileID: 28153240}
-  patrolB: {fileID: 1090743550}
-  speed: 1
 --- !u!61 &674451767 stripped
 BoxCollider2D:
   m_CorrespondingSourceObject: {fileID: 2686147885072490657, guid: daaa7e3c78a39324e8ddf518dd73cb1a, type: 3}
@@ -931,9 +911,21 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8661104388714488780, guid: daaa7e3c78a39324e8ddf518dd73cb1a, type: 3}
+      propertyPath: patrolA
+      value: 
+      objectReference: {fileID: 28153240}
+    - target: {fileID: 8661104388714488780, guid: daaa7e3c78a39324e8ddf518dd73cb1a, type: 3}
+      propertyPath: patrolB
+      value: 
+      objectReference: {fileID: 1090743550}
+    - target: {fileID: 8661104388714488780, guid: daaa7e3c78a39324e8ddf518dd73cb1a, type: 3}
       propertyPath: playerHealth
       value: 
       objectReference: {fileID: 1695626991}
+    - target: {fileID: 8661104388714488780, guid: daaa7e3c78a39324e8ddf518dd73cb1a, type: 3}
+      propertyPath: playerObject
+      value: 
+      objectReference: {fileID: 1695626983}
     - target: {fileID: 8661104388714488780, guid: daaa7e3c78a39324e8ddf518dd73cb1a, type: 3}
       propertyPath: enemyCollider
       value: 

@@ -4,6 +4,11 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 public class EnemyPatrol : MonoBehaviour
+
+    /// this is all joined with the core enemy behaviour script now
+    /// and is thus obsolete
+    /// don't use this script
+
 {
     [SerializeField]
     private GameObject patrolA;
