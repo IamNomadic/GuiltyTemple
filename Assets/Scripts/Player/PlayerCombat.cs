@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -28,8 +29,8 @@ public class PlayerCombat : MonoBehaviour
         foreach (Collider2D enemy in hitEnemies)
         {
             Debug.Log(enemy.name + " was hit.");
-            
-            enemy.GetComponent<Enemy>().TakeDamage(playerATKDamage);
+            enemy.SendMessage("TakeDamage", playerATKDamage);
+            //enemy.GetComponent<Enemy>().TakeDamage(playerATKDamage);
         }
         
         IEnumerator AttackWaitTime()

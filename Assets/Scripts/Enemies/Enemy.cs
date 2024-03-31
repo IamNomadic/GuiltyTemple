@@ -8,50 +8,59 @@ public class Enemy : MonoBehaviour
     //note to self; enemy class > enemy types will be children with variables like damage, health, range, etc changed
     #region player stuff
     [SerializeField]                    //get our player stuff first
-    private Object playerObject;        // who is your daddy
+    protected Object playerObject;        // who is your daddy
     [SerializeField]
-    private PlayerHealth playerHealth;  // what does he do
+    protected PlayerHealth playerHealth;  // what does he do
     #endregion
 
     #region Enemy properties
     [SerializeField]
-    public int enemyMaxHealth;
-    int enemyCurrentHealth;
-    private BoxCollider2D enemyCollider; //gotta check if any of these need to be culled when I'm done here
-    private Rigidbody2D rb;
-    private bool inKnockback = false;
+    protected Animator animator;
     [SerializeField]
-    private float knockbackTimer = 0.4f; //how long are we in knockback mode
-    bool shoved = false; //has the knockback effect occurred yet
+    protected int enemyMaxHealth;
+    protected int enemyCurrentHealth;
+    protected BoxCollider2D enemyCollider; //gotta check if any of these need to be culled when I'm done here
+    protected Rigidbody2D rb;
+    [SerializeField]
+    public bool inKnockback = false;
+    [SerializeField]
+    protected float knockbackTimer = 0.4f; //how long are we in knockback mode
+    protected bool shoved = false; //has the knockback effect occurred yet
+    protected bool movingRight = true;
+    protected float horizontal;
+    protected float vertical;
     #endregion
 
     #region EnemyAttack
     [SerializeField]
-    private int damage;
+    protected int damage;
     [SerializeField]
-    private float attackCooldown;
-    private float cooldownTimer = Mathf.Infinity;
+    protected float attackCooldown;
+    protected float cooldownTimer = Mathf.Infinity;
     [SerializeField]
-    private float moveSpeed = 1;
+    protected float moveSpeed = 1;
+    protected bool canAttack = true;
+    [SerializeField]
+    protected float attackRange = 0.3f; //start swinging at this range
     #endregion
 
     #region Patrol Stuff
     [SerializeField]
-    private GameObject patrolA; //waypoint 1
+    protected GameObject patrolA; //waypoint 1
     [SerializeField]
-    private GameObject patrolB; //waypoint 2
+    protected GameObject patrolB; //waypoint 2
     [SerializeField]
-    private float patrolSpeed = 1;
-    private Transform currentPatrolTarget;
+    protected float patrolSpeed = 1;
+    protected Transform currentPatrolTarget;
     #endregion
 
     #region EnemyDetection
     [SerializeField]
-    private float detectionRange = 1.0f;
+    protected float detectionRange = 1.0f;
     [SerializeField]
-    private float colliderDistance;
+    protected float colliderDistance;
     [SerializeField]
-    private LayerMask playerLayer;
+    protected LayerMask playerLayer;
     #endregion
 
     //state machine setup
@@ -61,22 +70,22 @@ public class Enemy : MonoBehaviour
     }
     #region state machine stuff
     public Behavior currentState = Behavior.idle;
-    private Behavior nextState = Behavior.idle;
-    private Transform playerTarget;      //do we have a target
-    private bool isStateFinished = true; //all done
-    private bool interruptState = false; //can we switch to a different state?
-    private bool patrolRoute = false;
+    protected Behavior nextState = Behavior.idle;
+    protected Transform playerTarget;      //do we have a target
+    protected bool isStateFinished = true; //all done
+    protected bool interruptState = false; //can we switch to a different state?
+    protected bool patrolRoute = false;
     #endregion
 
 
 
-    private void Start()
+    protected void Start()
     {
         enemyCurrentHealth = enemyMaxHealth; //initialize at full health
         enemyCollider = GetComponent<BoxCollider2D>(); //grab our box and stuff    
         rb = GetComponent<Rigidbody2D>();
         Initialize();
-
+        animator.Play("Idle");
         if (patrolA && patrolB != null)                //set our patrol destination if we have one
         {
             patrolRoute = true;
@@ -89,7 +98,7 @@ public class Enemy : MonoBehaviour
         }
 
     }
-    public void Update()
+    protected void Update()
     {
         /*
         if (PlayerInSight())
@@ -105,7 +114,8 @@ public class Enemy : MonoBehaviour
             currentState = nextState;
             isStateFinished = false;
         }
-            switch(currentState)
+
+            switch (currentState)
             {
                 case Behavior.idle:
                     Idle();
@@ -124,8 +134,25 @@ public class Enemy : MonoBehaviour
                     break;
                 case Behavior.die:
                     Die();
+                interruptState = false;
+                isStateFinished = false;
                     break;
-            }        
+            }
+        
+
+
+    }
+
+    protected void CheckFacing()
+    {       
+        if (!movingRight && rb.velocity.x > 0f && !inKnockback)
+        {
+            Flip();
+        }
+        else if (movingRight && rb.velocity.x < 0f && !inKnockback)
+        {
+            Flip();
+        }
     }
 
     // commenting all of this out while I transplant these behaviours into a state machine
@@ -167,49 +194,56 @@ public class Enemy : MonoBehaviour
     */
 
 
-    private void Initialize()   // just in case child enemies need to do anything on Start() without overriding the work we do in this script
+    protected void Initialize()   // just in case child enemies need to do anything on Start() without overriding the work we do in this script
     {                           // don't even know if we'll need this but it was a problem I had in the physicsville assignment that I now have a solution to
 
     }
 
-    private void Idle()
+    protected void Idle()
     {
 
         interruptState = true;
-        
-        if(PlayerInSight())
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
         {
-            playerTarget = playerObject.GetComponent<Rigidbody2D>().transform;
-            currentState = Behavior.pursuit;
+            animator.Play("Idle");
         }
-
-        else if (patrolRoute)
-        {
-            currentState = Behavior.patrol;
-        }
-
-        // play idle animation and wait if the player isn't nearby and we have no assigned patrol route        
-    }
-
-    private void Patrol() // simple point A to point B, back and forth
-    {
-        interruptState = true;
-
-        Vector2 point = currentPatrolTarget.position - transform.position;
-        
         if (PlayerInSight())
         {
             playerTarget = playerObject.GetComponent<Rigidbody2D>().transform;
             nextState = Behavior.pursuit;
         }
-        
+
+        else if (patrolRoute)
+        {
+            nextState = Behavior.patrol;
+        }
+
+        // play idle animation and wait if the player isn't nearby and we have no assigned patrol route        
+    }
+
+    protected void Patrol() // simple point A to point B, back and forth
+    {
+        interruptState = true;
+
+        Vector2 point = currentPatrolTarget.position - transform.position;
+
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Walk"))
+        {
+            animator.Play("Walk");
+        }
+        if (PlayerInSight())
+        {
+            playerTarget = playerObject.GetComponent<Rigidbody2D>().transform;
+            nextState = Behavior.pursuit;
+        }
+        CheckFacing();
         if (currentPatrolTarget == patrolB.transform)
             {
-                rb.velocity = new Vector2(patrolSpeed, 0);
+                rb.velocity = new Vector2(patrolSpeed, rb.velocity.y);
             }
         else
             {
-                rb.velocity = new Vector2(-patrolSpeed, 0);
+                rb.velocity = new Vector2(-patrolSpeed, rb.velocity.y);
             }
         if (Vector2.Distance(transform.position, currentPatrolTarget.position) < .2f && currentPatrolTarget == patrolA.transform)
             {
@@ -222,81 +256,150 @@ public class Enemy : MonoBehaviour
 
     }
 
-    private void Pursuit()
+    protected virtual void Pursuit()
     {
-        //we're chasing the player now
-        //move to their location, check if we're in attacking range and our attack is off cooldown
+        //monk time
+        //
+        CheckFacing();
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Walk"))
+        {
+
+            animator.Play("Walk");
+        }
         interruptState = true;
         playerTarget = playerObject.GetComponent<Rigidbody2D>().transform;
-        //this is going to be different per enemy so idk if I should put anything in this script
+
+        if (!PlayerInSightChasing())
+        {
+            nextState = Behavior.idle;      //go back to patrolling or idling if we lose sight of the player
+        }            
+        if (Mathf.Abs(playerTarget.position.x - rb.transform.position.x) < attackRange && canAttack)    //swing within out attack range
+        {
+            nextState = Behavior.attack;
+        }
+
+        if (playerTarget.position.x > rb.transform.position.x) // check which way we're going
+        {
+            //Debug.Log("right");
+            rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
+        }
+        else
+        {
+            //Debug.Log("left");
+            rb.velocity = new Vector2(-moveSpeed, rb.velocity.y);
+        }
     }
 
-    private void Attack()
+    protected virtual void Attack()
     {
-        //thwack
-        //pow
-        //this is going to be different per enemy so idk if I should put anything in this script
+        interruptState = true;
+        if (canAttack)
+        {
+            CheckFacing(); //check facing once at the start of the attack
+            canAttack = false;
+            SpriteRenderer hbSprite = GetComponentInChildren<SpriteRenderer>();
+            hbSprite.color = Color.red;    //just enable the placeholder sprite for now
+            StartCoroutine(AttackTimer());
+            animator.Play("Attack");
+            IEnumerator AttackTimer()
+            {
+                Debug.Log("attack timer started");
+                yield return new WaitForSeconds(attackCooldown); //transmit damage to the player here when the player state machine is done
+                hbSprite.color = Color.white;
+                nextState = Behavior.idle;
+                isStateFinished = true;
+                canAttack = true;
+            }
+        }
     }
-    private void Knockback()
+    protected void Knockback()
     {
         //Debug.Log("knockback entered");
         //ouch
+        animator.Play("Struck");
         interruptState = false;               
         Vector2 knockbackDirection = (playerObject.GetComponent<Rigidbody2D>().transform.position - transform.position).normalized; //figure out where to push them back
         //rb.AddForce(knockbackDirection * -2f);   
-        StartCoroutine(KnockbackTimer());
-        if (!shoved)                //are we actually moving?
+        if (!shoved)  //are we actually moving?
         {
             shoved = true;
             rb.velocity = knockbackDirection * -3;
+            StartCoroutine(KnockbackTimer());
         }
 
         IEnumerator KnockbackTimer()
         {
-
             yield return new WaitForSeconds(knockbackTimer);
+            isStateFinished = true;
             shoved = false;
             inKnockback = false;
-            isStateFinished = true;
-            if (enemyCurrentHealth <= 0) // death check after the knockback
-            {
-                nextState = Behavior.die;
-            }
-            else                        //otherwise just hit idle so another behavior can take over
+            if (enemyCurrentHealth > 0) // death check after the knockback
             {
                 nextState = Behavior.idle;
             }
+            else                        //otherwise just hit idle so another behavior can take over
+            {
+                nextState = Behavior.die;
+            }
+
+
         }
     }
 
-    private void Die()
+    protected void Die()
     {
-        //enemy death animation
-        //Debug.Log("AUUUUUUUUUGUHHHGUHUHHH");
-        Destroy(gameObject); //away with us
+        animator.Play("Die");
+        interruptState = false;
+
+        /*
+        rb.velocity = new Vector2(0, 0);
+        rb.gravityScale = 0;
+        foreach (Collider2D Collider2D in gameObject.GetComponents<Collider2D>())
+        {
+            Destroy(Collider2D);
+        }
+        */
+         //away with us
         //if we have a dead sprite for these enemies we can just disable here instead to leave the body
     }
 
-    private bool PlayerInSight()
+    protected bool PlayerInSight()
     {
         RaycastHit2D hit = Physics2D.CircleCast(enemyCollider.bounds.center, detectionRange, Vector2.right, 0, playerLayer); //constant vigilance
         return hit.collider != null;
     }
-    private void OnDrawGizmos()
+
+    protected bool PlayerInSightChasing()       //double the sight range so enemies will chase a little further than they can spot you
+    {
+        RaycastHit2D hit = Physics2D.CircleCast(enemyCollider.bounds.center, detectionRange * 2, Vector2.right, 0, playerLayer); //constant vigilance
+        return hit.collider != null;
+    }
+    /*
+    protected void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(enemyCollider.bounds.center, detectionRange);
     }
-        
+     */
+
     public void TakeDamage(int damage)        
     {
-        Debug.Log("damage");
+
+        //Debug.Log("damage");
         if (!inKnockback)
         {
             inKnockback = true;                 //make sure we're not dealing damage multiple times with one swing
             enemyCurrentHealth -= damage;       //deal the damage
             nextState = Behavior.knockback;  //change the state
         }
+    }
+    protected  void Flip() //snip
+    {
+        //Debug.Log("flip");
+        movingRight = !movingRight;
+        Vector3 localScale = transform.localScale;
+        localScale.x *= -1f;
+        transform.localScale = localScale;
     }
 
 }
