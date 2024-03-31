@@ -306,9 +306,13 @@ public class Enemy : MonoBehaviour
                 Debug.Log("attack timer started");
                 yield return new WaitForSeconds(attackCooldown); //transmit damage to the player here when the player state machine is done
                 hbSprite.color = Color.white;
-                nextState = Behavior.idle;
-                isStateFinished = true;
-                canAttack = true;
+                if(nextState != Behavior.die)
+                {
+                    nextState = Behavior.idle;
+                    isStateFinished = true;
+                    canAttack = true;
+                }
+
             }
         }
     }
