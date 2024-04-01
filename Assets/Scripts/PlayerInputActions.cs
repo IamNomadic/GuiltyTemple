@@ -8,6 +8,7 @@ public class PlayerInputActions : MonoBehaviour
     
     private PlayerMovement playerController;
     private PlayerCombat playerCombatController;
+    private PauseMenu pauseMenu;
 
     PlayerInputs playerInput;
     // Start is called before the first frame update
@@ -27,6 +28,7 @@ public class PlayerInputActions : MonoBehaviour
             playerInput.Player.WTransform.performed += i => playerController.WTransform();
             playerInput.Player.Dodge.performed += i => playerController.Dodge();
             playerInput.Player.Fire.performed += i => playerCombatController.Attack();
+            playerInput.Player.Pause.performed += i => pauseMenu.Pause();
 
 
 

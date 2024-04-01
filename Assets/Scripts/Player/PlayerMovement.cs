@@ -15,6 +15,8 @@ public class PlayerMovement : MonoBehaviour
     #region transformationVariables
     bool VTransformed;
     bool WTransformed;
+    bool HTransformed;
+
 
     [SerializeField]
     public float transformCooldown;
@@ -47,6 +49,7 @@ public class PlayerMovement : MonoBehaviour
     {
         isJumping = false;
         playerCombat = GetComponent<PlayerCombat>();
+        HTransformed = true;
 
     }
 
@@ -70,6 +73,8 @@ public class PlayerMovement : MonoBehaviour
             dodgeSpeed = 2.5f;
             jumpingPower = 3.4f;
             speed = 1f;
+            HTransformed = true;
+            playerCombat.attackRange = 0.2f;
         }
         if (transformCooldown <= 0 && WTransformed == true)
         {
@@ -81,6 +86,8 @@ public class PlayerMovement : MonoBehaviour
             dodgeSpeed = 2.5f;
             jumpingPower = 3.4f;
             speed = 1f;
+            HTransformed = true;
+
         }
         #endregion
 
@@ -90,23 +97,88 @@ public class PlayerMovement : MonoBehaviour
 
 
         //Animations
-        if (isJumping && playerCombat.isAttacking)
+        if (isJumping && playerCombat.isAttacking && HTransformed)
         {
             animator.Play("AirAttack");
 
         }
-        else if (isJumping)
+        if (playerCombat.isAttacking && HTransformed)
+        {
+            animator.Play("Attack");
+
+        }
+        else if (isJumping && HTransformed)
         {
             animator.Play("Jump");
 
         }
-        if (horizontal > 0.1 && isJumping == false && playerCombat.isAttacking|| horizontal < -0.1 && isJumping == false && playerCombat.isAttacking)
+        if (horizontal > 0.1 && isJumping == false && playerCombat.isAttacking && HTransformed || horizontal < -0.1 && isJumping == false && playerCombat.isAttacking && HTransformed)
         {
             animator.Play("Attack");
         }
-        else if (horizontal > 0.1 && isJumping == false || horizontal < -0.1 && isJumping == false)
+        else if (horizontal > 0.1 && isJumping == false && !isDodging && HTransformed || horizontal < -0.1 && isJumping == false && !isDodging  && HTransformed)
         {
             animator.Play("Run");
+        }
+        if (isDodging && HTransformed)
+        {
+            animator.Play("Dash");
+        }
+        ///
+        if (isJumping && playerCombat.isAttacking && VTransformed)
+        {
+            animator.Play("VAirAttack");
+
+        }
+        if (playerCombat.isAttacking && VTransformed)
+        {
+            animator.Play("VAttack");
+
+        }
+        else if (isJumping && VTransformed)
+        {
+            animator.Play("VJump");
+
+        }
+        if (horizontal > 0.1 && isJumping == false && playerCombat.isAttacking && VTransformed || horizontal < -0.1 && isJumping == false && playerCombat.isAttacking && VTransformed)
+        {
+            animator.Play("VAttack");
+        }
+        else if (horizontal > 0.1 && isJumping == false && !isDodging && VTransformed || horizontal < -0.1 && isJumping == false && !isDodging && VTransformed)
+        {   
+            animator.Play("VWalk");
+        }
+        if (isDodging && VTransformed)
+        {
+            animator.Play("VDash");
+        }
+        ///
+        if (isJumping && playerCombat.isAttacking && WTransformed)
+        {
+            animator.Play("WAirAttack");
+
+        }
+        if (playerCombat.isAttacking && WTransformed)
+        {
+            animator.Play("WAttack");
+
+        }
+        else if (isJumping && WTransformed)
+        {
+            animator.Play("WJump");
+
+        }
+        if (horizontal > 0.1 && isJumping == false && playerCombat.isAttacking && WTransformed || horizontal < -0.1 && isJumping == false && playerCombat.isAttacking && WTransformed)
+        {
+            animator.Play("WAttack");//needs to be change to Walking attack anim
+        }
+        else if (horizontal > 0.1 && isJumping == false && !isDodging && WTransformed || horizontal < -0.1 && isJumping == false && !isDodging && WTransformed)
+        {
+            animator.Play("WWalk");
+        }
+        if (isDodging && WTransformed)
+        {
+            animator.Play("WDash");
         }
 
 
@@ -158,7 +230,19 @@ public class PlayerMovement : MonoBehaviour
         {
             if (IsGrounded() && isJumping == true)
             {
-                animator.Play("Stand");
+                if (HTransformed)
+                {
+                    animator.Play("Stand");
+                }
+                if (VTransformed)
+                {
+                    animator.Play("VStand");
+                }
+                if (WTransformed)
+                {
+                    animator.Play("WStand");
+                }
+                
                 Debug.Log("Ground");
                 isJumping = false;
             }
@@ -242,7 +326,7 @@ public class PlayerMovement : MonoBehaviour
         }
         IEnumerator DodgeTimerCoroutine()
         {
-            yield return new WaitForSeconds(.2f);// Wait a sec
+            yield return new WaitForSeconds(.3f);// Wait a sec
             isDodging = false;
             dodgeAvailable = true;
 	   
@@ -257,14 +341,17 @@ public class PlayerMovement : MonoBehaviour
         if (transformCooldown <= 0)
         {
             VTransformed = true;
+            HTransformed = false;
             Debug.Log("Vtransform");
             animator.Play("Transform");
-            transformCooldown = 5;
+            transformCooldown = 10;
             //vampire movment values
             dodgeSpeed = 5;
             jumpingPower = 4.4f;
             speed = 1.5f;
-            playerCombat.attackRange = 5f;
+            playerCombat.attackRange = 4f;
+            
+            
         }
     }
 
@@ -275,13 +362,15 @@ public class PlayerMovement : MonoBehaviour
         if (transformCooldown <= 0)
         {
             WTransformed = true;
+            HTransformed = false;
             Debug.Log("Wtransform");
             animator.Play("Transform 0");
-            transformCooldown = 5;
+            transformCooldown = 10;
             //wolf movement values
             dodgeSpeed = 2;
             jumpingPower = 3.4f;
             speed = 0.7f;
+            
         }
     }
 
