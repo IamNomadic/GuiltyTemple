@@ -36,15 +36,20 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     protected bool isRangedAttacker = false; //do we have a ranged attack
     [SerializeField]
-    protected GameObject projectile; //what's our projectile if we're a ranged attacker?
-
+    protected EnemyProjectile projectile; //what's our projectile if we're a ranged attacker?
+    [SerializeField]
+    protected GameObject projectileSpawn; //where to create the projectile
+    [SerializeField]
+    protected float throwForce = 1;
     #endregion
 
     #region EnemyAttack
     [SerializeField]
     protected int damage;
     [SerializeField]
-    protected float attackCooldown;
+    protected float attackWindup; //time between starting the attack and enabling the hitbox/projectile
+    [SerializeField]
+    protected float attackCooldown; //total time that the attack will take
     protected float cooldownTimer = Mathf.Infinity;
     [SerializeField]
     protected float moveSpeed = 1;
@@ -80,10 +85,10 @@ public class Enemy : MonoBehaviour
     #region state machine stuff
     public Behavior currentState = Behavior.idle;
     protected Behavior nextState = Behavior.idle;
-    protected Transform playerTarget;      //do we have a target
-    protected bool isStateFinished = true; //all done
-    protected bool interruptState = false; //can we switch to a different state?
-    protected bool patrolRoute = false;
+    protected Transform playerTarget;      //do we have a target?
+    protected bool isStateFinished = true; //can we proceed to the next state now?
+    protected bool interruptState = false; //can we interrupt this state?
+    protected bool patrolRoute = false;    
     #endregion
 
 
@@ -139,7 +144,7 @@ public class Enemy : MonoBehaviour
                     Pursuit();
                     break;
                 case Behavior.attack:
-                    MeleeAttack();
+                    Attack();
                     break;
                 case Behavior.knockback:
                     Knockback();
@@ -209,22 +214,27 @@ public class Enemy : MonoBehaviour
     {
 
         interruptState = true;
-        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+
+        if (!isFlier && !animator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) //set our idle, flying or not
         {
             animator.Play("Idle");
         }
-        if (PlayerInSight())
+        if (isFlier && !animator.GetCurrentAnimatorStateInfo(0).IsName("Fly"))
+        {
+            animator.Play("Fly");
+        }
+
+
+        if (PlayerInSight()) //scanning area
         {
             playerTarget = playerObject.GetComponent<Rigidbody2D>().transform;
             nextState = Behavior.pursuit;
         }
 
-        else if (patrolRoute)
+        else if (patrolRoute) // patrol instead of idling if we have a route
         {
             nextState = Behavior.patrol;
-        }
-
-        // play idle animation and wait if the player isn't nearby and we have no assigned patrol route        
+        }      
     }
 
     protected void Patrol() // simple point A to point B, back and forth
@@ -278,6 +288,10 @@ public class Enemy : MonoBehaviour
         //monk time
         //
         CheckFacing();
+        if (Mathf.Abs(playerTarget.position.x - rb.transform.position.x) < attackRange && canAttack)    //swing within out attack range
+        {
+            nextState = Behavior.attack;
+        }
         interruptState = true;
         playerTarget = playerObject.GetComponent<Rigidbody2D>().transform;
 
@@ -298,7 +312,7 @@ public class Enemy : MonoBehaviour
                 rb.velocity = new Vector2(-moveSpeed, rb.velocity.y);
             }
         }
-        else if (isFlier) //wingaling movement
+        if (isFlier) //wingaling movement
         {
             if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Fly"))
             {
@@ -313,10 +327,7 @@ public class Enemy : MonoBehaviour
         {
             nextState = Behavior.idle;      //go back to patrolling or idling if we lose sight of the player
         }
-        if (Mathf.Abs(playerTarget.position.x - rb.transform.position.x) < attackRange && canAttack)    //swing within out attack range
-        {
-            nextState = Behavior.attack;
-        }
+
 
     }
 
@@ -327,54 +338,68 @@ public class Enemy : MonoBehaviour
         {
             MeleeAttack();
         }
-        else if(canAttack && isRangedAttacker)
+        else if (canAttack && isRangedAttacker)
         {
             RangedAttack();
         }
+
     }
     protected virtual void MeleeAttack()
-    {
-        CheckFacing(); //check facing once at the start of the attack
-        canAttack = false;
-        //SpriteRenderer hbSprite = GetComponentInChildren<SpriteRenderer>();
-        //hbSprite.color = Color.red;    //we're turning red
-        StartCoroutine(AttackTimer());
-        animator.Play("Attack");
-        IEnumerator AttackTimer()
-        {
-            //Debug.Log("attack timer started");
-            yield return new WaitForSeconds(attackCooldown); //transmit damage to the player here when the player state machine is done
-            //hbSprite.color = Color.white;
-            if (nextState != Behavior.die)
-            {
-                nextState = Behavior.idle;
-                isStateFinished = true;
-                canAttack = true;
-            }
 
+    {
+        
+        {
+            CheckFacing(); //check facing once at the start of the attack
+            canAttack = false;
+            //SpriteRenderer hbSprite = GetComponentInChildren<SpriteRenderer>();
+            //hbSprite.color = Color.red;    //we're turning red
+            StartCoroutine(AttackTimer());
+            animator.Play("Attack");
+            IEnumerator AttackTimer()
+            {
+                //Debug.Log("attack timer started");
+                yield return new WaitForSeconds(attackCooldown); //transmit damage to the player here when the player state machine is done
+                                                                 //hbSprite.color = Color.white;
+                if (nextState != Behavior.die)
+                {
+                    nextState = Behavior.idle;
+                    isStateFinished = true;
+                    canAttack = true;
+                }
+
+            }
         }
     }
     protected virtual void RangedAttack()
     {
-        //find the bearing from the enemy to the player
-        //produce the projectile and propel it towards them
-        CheckFacing(); //check facing once at the start of the attack
-        canAttack = false;
-        //SpriteRenderer hbSprite = GetComponentInChildren<SpriteRenderer>();
-        //hbSprite.color = Color.red;    
-        StartCoroutine(RangedAttackTimer());
-        animator.Play("RangedAttack");
-
-        IEnumerator RangedAttackTimer()
+        
         {
-            yield return new WaitForSeconds(attackCooldown);
-            if (nextState != Behavior.die)
+            //find the bearing from the enemy to the player
+            //produce the projectile and propel it towards them
+            CheckFacing(); //check facing once at the start of the attack
+            canAttack = false;
+            Vector2 throwDirection = (playerObject.GetComponent<Rigidbody2D>().transform.position - transform.position).normalized;
+            StartCoroutine(RangedAttackWindup());
+            StartCoroutine(RangedAttackTimer());
+            animator.Play("RangedAttack");
+            IEnumerator RangedAttackWindup()
             {
-                nextState = Behavior.idle;
-                isStateFinished = true;
-                canAttack = true;
+                Transform newProjLocation = projectileSpawn.transform;
+                yield return new WaitForSeconds(attackWindup);
+                EnemyProjectile newProjectile = Instantiate(projectile, newProjLocation.position, new Quaternion(0, 0, 0, 0));
+                newProjectile.BeThrown(throwDirection, throwForce, damage);
             }
+            IEnumerator RangedAttackTimer()
+            {
+                yield return new WaitForSeconds(attackCooldown);
+                if (nextState != Behavior.die)
+                {
+                    nextState = Behavior.idle;
+                    isStateFinished = true;
+                    canAttack = true;
+                }
 
+            }
         }
     }
 
