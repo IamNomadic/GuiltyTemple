@@ -19,26 +19,30 @@ public class PlayerCombat : MonoBehaviour
 
     public void Attack()
     {
-        if (!ph.dead)
+        if (!ph.dead && !isAttacking)
         {
             isAttacking = true;
-        }
-        animator.Play("Attack");
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
-        foreach (Collider2D enemy in hitEnemies)
-        {
-            Debug.Log(enemy.name + " was hit.");
-            enemy.SendMessage("TakeDamage", playerATKDamage);
-            //enemy.GetComponent<Enemy>().TakeDamage(playerATKDamage);
+            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+            foreach (Collider2D enemy in hitEnemies)
+            {
+                Debug.Log(enemy.name + " was hit.");
+                enemy.SendMessage("TakeDamage", playerATKDamage);
+                //enemy.GetComponent<Enemy>().TakeDamage(playerATKDamage);
+
+            }
+            StartCoroutine(AttackWaitTime());
         }
+        
+        
         
         IEnumerator AttackWaitTime()
         {
             yield return new WaitForSeconds(0.55f);
             isAttacking = false;
         }
-        StartCoroutine(AttackWaitTime());
+        
     }
     void OnDrawGizmosSelected()
     {

@@ -89,6 +89,15 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""06b472ee-2b9c-4b6d-9d34-9c25961a3569"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -364,6 +373,17 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""WTransform"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""483ebf1c-56e5-4484-a581-fa6272d99a73"",
+                    ""path"": ""<Keyboard>/p"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -958,6 +978,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         m_Player_Dodge = m_Player.FindAction("Dodge", throwIfNotFound: true);
         m_Player_VTransform = m_Player.FindAction("VTransform", throwIfNotFound: true);
         m_Player_WTransform = m_Player.FindAction("WTransform", throwIfNotFound: true);
+        m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1038,6 +1059,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Dodge;
     private readonly InputAction m_Player_VTransform;
     private readonly InputAction m_Player_WTransform;
+    private readonly InputAction m_Player_Pause;
     public struct PlayerActions
     {
         private @PlayerInputs m_Wrapper;
@@ -1049,6 +1071,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         public InputAction @Dodge => m_Wrapper.m_Player_Dodge;
         public InputAction @VTransform => m_Wrapper.m_Player_VTransform;
         public InputAction @WTransform => m_Wrapper.m_Player_WTransform;
+        public InputAction @Pause => m_Wrapper.m_Player_Pause;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1079,6 +1102,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @WTransform.started += instance.OnWTransform;
             @WTransform.performed += instance.OnWTransform;
             @WTransform.canceled += instance.OnWTransform;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1104,6 +1130,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @WTransform.started -= instance.OnWTransform;
             @WTransform.performed -= instance.OnWTransform;
             @WTransform.canceled -= instance.OnWTransform;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1293,6 +1322,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         void OnDodge(InputAction.CallbackContext context);
         void OnVTransform(InputAction.CallbackContext context);
         void OnWTransform(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
