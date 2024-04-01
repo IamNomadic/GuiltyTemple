@@ -102,12 +102,12 @@ public class PlayerMovement : MonoBehaviour
             animator.Play("AirAttack");
 
         }
-        if (playerCombat.isAttacking && HTransformed)
+        else if (playerCombat.isAttacking && HTransformed)
         {
             animator.Play("Attack");
 
         }
-        else if (isJumping && HTransformed)
+        else if (isJumping && HTransformed && !isDodging)
         {
             animator.Play("Jump");
 
@@ -120,25 +120,26 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.Play("Run");
         }
+        else if (horizontal < 0.1 && isJumping == false && !isDodging && !playerCombat.isAttacking && HTransformed || horizontal > -0.1 && isJumping == false && !isDodging && !playerCombat.isAttacking && HTransformed)
+        {
+            animator.Play("Stand");
+        }
         if (isDodging && HTransformed)
         {
             animator.Play("Dash");
         }
-        ///
+        ///vampire anims
         if (isJumping && playerCombat.isAttacking && VTransformed)
         {
             animator.Play("VAirAttack");
-
         }
-        if (playerCombat.isAttacking && VTransformed)
+        else if (playerCombat.isAttacking && VTransformed)
         {
             animator.Play("VAttack");
-
         }
-        else if (isJumping && VTransformed)
+        else if (isJumping && VTransformed && !isDodging)
         {
             animator.Play("VJump");
-
         }
         if (horizontal > 0.1 && isJumping == false && playerCombat.isAttacking && VTransformed || horizontal < -0.1 && isJumping == false && playerCombat.isAttacking && VTransformed)
         {
@@ -148,25 +149,26 @@ public class PlayerMovement : MonoBehaviour
         {   
             animator.Play("VWalk");
         }
+        else if (horizontal < 0.1 && isJumping == false && !isDodging && !playerCombat.isAttacking && VTransformed || horizontal > -0.1 && isJumping == false && !isDodging&& !playerCombat.isAttacking && VTransformed)
+        {
+            animator.Play("VStand");
+        }
         if (isDodging && VTransformed)
         {
             animator.Play("VDash");
         }
-        ///
+        /// wolf anims
         if (isJumping && playerCombat.isAttacking && WTransformed)
         {
             animator.Play("WAirAttack");
-
         }
-        if (playerCombat.isAttacking && WTransformed)
+        else if (playerCombat.isAttacking && WTransformed)
         {
             animator.Play("WAttack");
-
         }
-        else if (isJumping && WTransformed)
+        else if (isJumping && WTransformed && !isDodging)
         {
             animator.Play("WJump");
-
         }
         if (horizontal > 0.1 && isJumping == false && playerCombat.isAttacking && WTransformed || horizontal < -0.1 && isJumping == false && playerCombat.isAttacking && WTransformed)
         {
@@ -176,18 +178,25 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.Play("WWalk");
         }
+        else if (horizontal < 0.1 && isJumping == false && !isDodging && !playerCombat.isAttacking && WTransformed || horizontal > -0.1 && isJumping == false && !isDodging && !playerCombat.isAttacking && WTransformed)
+        {
+            animator.Play("WStand");
+        }
         if (isDodging && WTransformed)
         {
             animator.Play("WDash");
         }
 
 
+
         #endregion
 
 
+
+        #region Flip Code
         if (canMove)
         {
-            #region Flip Code
+            
             if (!isFacingRight && horizontal > 0f)
             {
                 Flip();
@@ -234,11 +243,11 @@ public class PlayerMovement : MonoBehaviour
                 {
                     animator.Play("Stand");
                 }
-                if (VTransformed)
+                else if (VTransformed)
                 {
                     animator.Play("VStand");
                 }
-                if (WTransformed)
+                else if (WTransformed)
                 {
                     animator.Play("WStand");
                 }
@@ -341,6 +350,7 @@ public class PlayerMovement : MonoBehaviour
         if (transformCooldown <= 0)
         {
             VTransformed = true;
+            WTransformed = false;
             HTransformed = false;
             Debug.Log("Vtransform");
             animator.Play("Transform");
@@ -363,6 +373,7 @@ public class PlayerMovement : MonoBehaviour
         {
             WTransformed = true;
             HTransformed = false;
+            VTransformed = false;
             Debug.Log("Wtransform");
             animator.Play("Transform 0");
             transformCooldown = 10;
