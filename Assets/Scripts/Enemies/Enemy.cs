@@ -29,6 +29,15 @@ public class Enemy : MonoBehaviour
     protected bool movingRight = true;
     protected float horizontal;
     protected float vertical;
+    [SerializeField]
+    protected bool isFlier = false; //is this a flying enemy
+    [SerializeField]
+    protected bool isMeleeAttacker = false; //whack
+    [SerializeField]
+    protected bool isRangedAttacker = false; //do we have a ranged attack
+    [SerializeField]
+    protected GameObject projectile; //what's our projectile if we're a ranged attacker?
+
     #endregion
 
     #region EnemyAttack
@@ -84,8 +93,11 @@ public class Enemy : MonoBehaviour
         enemyCurrentHealth = enemyMaxHealth; //initialize at full health
         enemyCollider = GetComponent<BoxCollider2D>(); //grab our box and stuff    
         rb = GetComponent<Rigidbody2D>();
-        Initialize();
         animator.Play("Idle");
+        if (isFlier)
+        {
+            rb.gravityScale = 0;
+        }
         if (patrolA && patrolB != null)                //set our patrol destination if we have one
         {
             patrolRoute = true;
@@ -127,7 +139,7 @@ public class Enemy : MonoBehaviour
                     Pursuit();
                     break;
                 case Behavior.attack:
-                    Attack();
+                    MeleeAttack();
                     break;
                 case Behavior.knockback:
                     Knockback();
@@ -193,12 +205,6 @@ public class Enemy : MonoBehaviour
     }
     */
 
-
-    protected void Initialize()   // just in case child enemies need to do anything on Start() without overriding the work we do in this script
-    {                           // don't even know if we'll need this but it was a problem I had in the physicsville assignment that I now have a solution to
-
-    }
-
     protected void Idle()
     {
 
@@ -227,10 +233,21 @@ public class Enemy : MonoBehaviour
 
         Vector2 point = currentPatrolTarget.position - transform.position;
 
-        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Walk"))
+        if (isFlier)
         {
-            animator.Play("Walk");
+            if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Fly"))
+            {
+                animator.Play("Fly");
+            }
         }
+        else
+        {
+            if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Walk"))
+            {
+                animator.Play("Walk");
+            }
+        }
+
         if (PlayerInSight())
         {
             playerTarget = playerObject.GetComponent<Rigidbody2D>().transform;
@@ -261,61 +278,107 @@ public class Enemy : MonoBehaviour
         //monk time
         //
         CheckFacing();
-        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Walk"))
-        {
-
-            animator.Play("Walk");
-        }
         interruptState = true;
         playerTarget = playerObject.GetComponent<Rigidbody2D>().transform;
+
+        if (!isFlier) //walk it off
+        {
+            if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Walk"))
+            {
+                animator.Play("Walk");
+            }
+            if (playerTarget.position.x > rb.transform.position.x) // check which way we're going
+            {
+                //Debug.Log("right");
+                rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
+            }
+            else
+            {
+                //Debug.Log("left");
+                rb.velocity = new Vector2(-moveSpeed, rb.velocity.y);
+            }
+        }
+        else if (isFlier) //wingaling movement
+        {
+            if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Fly"))
+            {
+                animator.Play("Fly");
+            }
+            Vector2 flyDirection = (playerObject.GetComponent<Rigidbody2D>().transform.position - transform.position).normalized;
+            rb.velocity = flyDirection * moveSpeed;
+
+        }
 
         if (!PlayerInSightChasing())
         {
             nextState = Behavior.idle;      //go back to patrolling or idling if we lose sight of the player
-        }            
+        }
         if (Mathf.Abs(playerTarget.position.x - rb.transform.position.x) < attackRange && canAttack)    //swing within out attack range
         {
             nextState = Behavior.attack;
         }
 
-        if (playerTarget.position.x > rb.transform.position.x) // check which way we're going
-        {
-            //Debug.Log("right");
-            rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
-        }
-        else
-        {
-            //Debug.Log("left");
-            rb.velocity = new Vector2(-moveSpeed, rb.velocity.y);
-        }
     }
 
     protected virtual void Attack()
     {
         interruptState = true;
-        if (canAttack)
+        if (canAttack && isMeleeAttacker)
         {
-            CheckFacing(); //check facing once at the start of the attack
-            canAttack = false;
-            SpriteRenderer hbSprite = GetComponentInChildren<SpriteRenderer>();
-            hbSprite.color = Color.red;    //just enable the placeholder sprite for now
-            StartCoroutine(AttackTimer());
-            animator.Play("Attack");
-            IEnumerator AttackTimer()
-            {
-                Debug.Log("attack timer started");
-                yield return new WaitForSeconds(attackCooldown); //transmit damage to the player here when the player state machine is done
-                hbSprite.color = Color.white;
-                if(nextState != Behavior.die)
-                {
-                    nextState = Behavior.idle;
-                    isStateFinished = true;
-                    canAttack = true;
-                }
-
-            }
+            MeleeAttack();
+        }
+        else if(canAttack && isRangedAttacker)
+        {
+            RangedAttack();
         }
     }
+    protected virtual void MeleeAttack()
+    {
+        CheckFacing(); //check facing once at the start of the attack
+        canAttack = false;
+        //SpriteRenderer hbSprite = GetComponentInChildren<SpriteRenderer>();
+        //hbSprite.color = Color.red;    //we're turning red
+        StartCoroutine(AttackTimer());
+        animator.Play("Attack");
+        IEnumerator AttackTimer()
+        {
+            //Debug.Log("attack timer started");
+            yield return new WaitForSeconds(attackCooldown); //transmit damage to the player here when the player state machine is done
+            //hbSprite.color = Color.white;
+            if (nextState != Behavior.die)
+            {
+                nextState = Behavior.idle;
+                isStateFinished = true;
+                canAttack = true;
+            }
+
+        }
+    }
+    protected virtual void RangedAttack()
+    {
+        //find the bearing from the enemy to the player
+        //produce the projectile and propel it towards them
+        CheckFacing(); //check facing once at the start of the attack
+        canAttack = false;
+        //SpriteRenderer hbSprite = GetComponentInChildren<SpriteRenderer>();
+        //hbSprite.color = Color.red;    
+        StartCoroutine(RangedAttackTimer());
+        animator.Play("RangedAttack");
+
+        IEnumerator RangedAttackTimer()
+        {
+            yield return new WaitForSeconds(attackCooldown);
+            if (nextState != Behavior.die)
+            {
+                nextState = Behavior.idle;
+                isStateFinished = true;
+                canAttack = true;
+            }
+
+        }
+    }
+
+
     protected void Knockback()
     {
         //Debug.Log("knockback entered");
@@ -352,10 +415,11 @@ public class Enemy : MonoBehaviour
 
     protected void Die()
     {
-        animator.Play("Die");
+        animator.Play("Die");          //away with us
         interruptState = false;
+        rb.gravityScale = 1;
 
-        /*
+        /*  I feel like we want to just make the collider ignore the player rather than destroying anything
         rb.velocity = new Vector2(0, 0);
         rb.gravityScale = 0;
         foreach (Collider2D Collider2D in gameObject.GetComponents<Collider2D>())
@@ -363,7 +427,6 @@ public class Enemy : MonoBehaviour
             Destroy(Collider2D);
         }
         */
-         //away with us
         //if we have a dead sprite for these enemies we can just disable here instead to leave the body
     }
 
