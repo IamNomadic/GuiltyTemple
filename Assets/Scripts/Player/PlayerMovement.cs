@@ -100,21 +100,18 @@ public class PlayerMovement : MonoBehaviour
         if (isJumping && playerCombat.isAttacking && HTransformed)
         {
             animator.Play("AirAttack");
-
         }
-        else if (playerCombat.isAttacking && HTransformed)
+        else if (horizontal > 0.1 && isJumping == false && playerCombat.isAttacking && HTransformed || horizontal < -0.1 && isJumping == false && playerCombat.isAttacking && HTransformed)
+        {
+            animator.Play("WalkingAttack");
+        }
+        else if (horizontal < 0.1 && playerCombat.isAttacking && HTransformed || horizontal > -0.1 && playerCombat.isAttacking && HTransformed)
         {
             animator.Play("Attack");
-
         }
         else if (isJumping && HTransformed && !isDodging)
         {
             animator.Play("Jump");
-
-        }
-        if (horizontal > 0.1 && isJumping == false && playerCombat.isAttacking && HTransformed || horizontal < -0.1 && isJumping == false && playerCombat.isAttacking && HTransformed)
-        {
-            animator.Play("Attack");
         }
         else if (horizontal > 0.1 && isJumping == false && !isDodging && HTransformed || horizontal < -0.1 && isJumping == false && !isDodging  && HTransformed)
         {
@@ -133,6 +130,10 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.Play("VAirAttack");
         }
+        else if (horizontal > 0.1 && isJumping == false && playerCombat.isAttacking && VTransformed || horizontal < -0.1 && isJumping == false && playerCombat.isAttacking && VTransformed)
+        {
+            animator.Play("VWalkingAttack");
+        }
         else if (playerCombat.isAttacking && VTransformed)
         {
             animator.Play("VAttack");
@@ -140,10 +141,6 @@ public class PlayerMovement : MonoBehaviour
         else if (isJumping && VTransformed && !isDodging)
         {
             animator.Play("VJump");
-        }
-        if (horizontal > 0.1 && isJumping == false && playerCombat.isAttacking && VTransformed || horizontal < -0.1 && isJumping == false && playerCombat.isAttacking && VTransformed)
-        {
-            animator.Play("VAttack");
         }
         else if (horizontal > 0.1 && isJumping == false && !isDodging && VTransformed || horizontal < -0.1 && isJumping == false && !isDodging && VTransformed)
         {   
@@ -162,6 +159,10 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.Play("WAirAttack");
         }
+        else if (horizontal > 0.1 && isJumping == false && playerCombat.isAttacking && WTransformed || horizontal < -0.1 && isJumping == false && playerCombat.isAttacking && WTransformed)
+        {
+            animator.Play("WWalkingAttack");
+        }
         else if (playerCombat.isAttacking && WTransformed)
         {
             animator.Play("WAttack");
@@ -169,10 +170,6 @@ public class PlayerMovement : MonoBehaviour
         else if (isJumping && WTransformed && !isDodging)
         {
             animator.Play("WJump");
-        }
-        if (horizontal > 0.1 && isJumping == false && playerCombat.isAttacking && WTransformed || horizontal < -0.1 && isJumping == false && playerCombat.isAttacking && WTransformed)
-        {
-            animator.Play("WAttack");//needs to be change to Walking attack anim
         }
         else if (horizontal > 0.1 && isJumping == false && !isDodging && WTransformed || horizontal < -0.1 && isJumping == false && !isDodging && WTransformed)
         {
