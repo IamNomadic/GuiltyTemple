@@ -3,41 +3,58 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
 public class PlayerMovement : MonoBehaviour
 {
-	
-    public Rigidbody2D rb;
-    public Transform groundCheck;
-    public LayerMask groundLayer;
-    public Animator animator;
-    public PlayerCombat playerCombat;
+    Rigidbody2D rb;
+    [HideInInspector] public Transform groundCheck;
+    [HideInInspector] public LayerMask groundLayer;
+    Animator animator;
+    PlayerCombat playerCombat;
+    PlayerHealth playerHealth;
     #region transformationVariables
-    bool VTransformed;
-    bool WTransformed;
-    bool HTransformed;
-
-
-    [SerializeField]
-    public float transformCooldown;
+    [HideInInspector] public bool VTransformed;
+    [HideInInspector] public bool WTransformed;
+    [HideInInspector] public bool HTransformed;
+    [SerializeField] float cooldown;
+    [Header("Vampire")]
+    //Vampire Character values
+    [SerializeField] int vHP;
+    [SerializeField] float vWalkSpeed;
+    [SerializeField] float vJumpPower;
+    [SerializeField] float vDodgeSpeed;
+    [SerializeField] float vAttackRange;
+    [SerializeField] float vCooldown;
+    [Header("Wolf")]
+    //Wolf Character values
+    [SerializeField] int wHP;
+    [SerializeField] float wWalkSpeed;
+    [SerializeField] float wJumpPower;
+    [SerializeField] float wDodgeSpeed;
+    [SerializeField] float wAttackRange;
+    [SerializeField] float wCooldown;
+    [Header("Human")]
+    //Base Characer values
+    [SerializeField] int hHP;
+    [SerializeField] public float hWalkSpeed;
+    [SerializeField] float hJumpPower;
+    [SerializeField] float hDodgeSpeed;
+    [SerializeField] float hAttackRange;
+    
     #endregion 
 
     #region MovmentVariables
     private float horizontal;
     private float vertical;
-    [SerializeField]
-    private float speed = 2f;
-    [SerializeField]
-    private float jumpingPower = 4f;
-    [SerializeField]
+    private float walkSpeed = 2f;
+    private float jumpPower = 4f;
     private float dodgeSpeed = 7f;
     private bool dodgeAvailable = true;
-
     private bool isFacingRight = true;
     [SerializeField]
     private bool isDodging, isJumping;
     private bool canGroundCheck = true;
     public bool canMove = true;
+    bool isTransforming;
    
 
     #endregion
@@ -47,10 +64,22 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        isJumping = false;
-        playerCombat = GetComponent<PlayerCombat>();
-        HTransformed = true;
+        //getting our components
 
+        playerCombat = GetComponent<PlayerCombat>();
+        playerHealth = GetComponent<PlayerHealth>();
+        animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
+        // setting character values to default 
+        HTransformed = true;
+        walkSpeed = hWalkSpeed;
+        jumpPower = hJumpPower;
+        dodgeSpeed = hDodgeSpeed;
+        playerCombat.attackRange = hAttackRange;
+        playerHealth.maxHealth = hHP;
+        cooldown = 0;
+        isJumping = false;
+        canMove = true;
     }
 
     // Update is called once per frame
@@ -58,34 +87,42 @@ public class PlayerMovement : MonoBehaviour
     {
         #region Transform Cooldown and DeTransformation
         //transform cooldown increment
-        if (transformCooldown>0)
+        if (cooldown>0)
         {
-            transformCooldown = transformCooldown - Time.deltaTime;
+            cooldown = cooldown - Time.deltaTime;
         }
 
        //checks your form and the cooldown and automatically detransition you
-        if (transformCooldown <= 0 && VTransformed == true)
+        if (cooldown <= 0 && VTransformed == true)
         {
+            canMove = false;
             VTransformed = false;
 
             animator.Play("VDetrans");
             //Base form movment values
-            dodgeSpeed = 2.5f;
-            jumpingPower = 3.4f;
-            speed = 1f;
+            walkSpeed = hWalkSpeed;
+            jumpPower = hJumpPower;
+            dodgeSpeed = hDodgeSpeed;
+            playerCombat.attackRange = hAttackRange;
             HTransformed = true;
-            playerCombat.attackRange = 0.2f;
+            StartCoroutine(VDetrans());
+            IEnumerator VDetrans()
+            {
+                yield return new WaitForSeconds(0.55f);
+                canMove = true;
+            }
+            
         }
-        if (transformCooldown <= 0 && WTransformed == true)
+        if (cooldown <= 0 && WTransformed == true)
         {
             WTransformed = false;
 
             animator.Play("WDetrans");
             //Base form movment values
-
-            dodgeSpeed = 2.5f;
-            jumpingPower = 3.4f;
-            speed = 1f;
+            walkSpeed = hWalkSpeed;
+            jumpPower = hJumpPower;
+            dodgeSpeed = hDodgeSpeed;
+            playerCombat.attackRange = hAttackRange;
             HTransformed = true;
 
         }
@@ -97,40 +134,40 @@ public class PlayerMovement : MonoBehaviour
 
 
         //Animations
-        if (isJumping && playerCombat.isAttacking && HTransformed)
+        if (canMove && isJumping && playerCombat.isAttacking && HTransformed)
         {
             animator.Play("AirAttack");
         }
-        else if (horizontal > 0.1 && isJumping == false && playerCombat.isAttacking && HTransformed || horizontal < -0.1 && isJumping == false && playerCombat.isAttacking && HTransformed)
+        else if (canMove && horizontal > 0.1 && isJumping == false && playerCombat.isAttacking && HTransformed || canMove && horizontal < -0.1 && isJumping == false && playerCombat.isAttacking && HTransformed)
         {
             animator.Play("WalkingAttack");
         }
-        else if (horizontal < 0.1 && playerCombat.isAttacking && HTransformed || horizontal > -0.1 && playerCombat.isAttacking && HTransformed)
+        else if (canMove && horizontal < 0.1 && playerCombat.isAttacking && HTransformed || canMove && horizontal > -0.1 && playerCombat.isAttacking && HTransformed)
         {
             animator.Play("Attack");
         }
-        else if (isJumping && HTransformed && !isDodging)
+        else if (canMove && isJumping && HTransformed && !isDodging)
         {
             animator.Play("Jump");
         }
-        else if (horizontal > 0.1 && isJumping == false && !isDodging && HTransformed || horizontal < -0.1 && isJumping == false && !isDodging  && HTransformed)
+        else if (canMove && horizontal > 0.1 && isJumping == false && !isDodging && HTransformed || canMove && horizontal < -0.1 && isJumping == false && !isDodging  && HTransformed)
         {
             animator.Play("Run");
         }
-        else if (horizontal < 0.1 && isJumping == false && !isDodging && !playerCombat.isAttacking && HTransformed || horizontal > -0.1 && isJumping == false && !isDodging && !playerCombat.isAttacking && HTransformed)
+        else if (canMove && horizontal < 0.1 && isJumping == false && !isDodging && !playerCombat.isAttacking && HTransformed || canMove && horizontal > -0.1 && isJumping == false && !isDodging && !playerCombat.isAttacking && HTransformed)
         {
             animator.Play("Stand");
         }
-        if (isDodging && HTransformed)
+        if (canMove && isDodging && HTransformed)
         {
             animator.Play("Dash");
         }
         ///vampire anims
-        if (isJumping && playerCombat.isAttacking && VTransformed)
+        if (canMove && isJumping && playerCombat.isAttacking && VTransformed)
         {
             animator.Play("VAirAttack");
         }
-        else if (horizontal > 0.1 && isJumping == false && playerCombat.isAttacking && VTransformed || horizontal < -0.1 && isJumping == false && playerCombat.isAttacking && VTransformed)
+        else if (canMove && horizontal > 0.1 && isJumping == false && playerCombat.isAttacking && VTransformed || canMove && horizontal < -0.1 && isJumping == false && playerCombat.isAttacking && VTransformed)
         {
             animator.Play("VWalkingAttack");
         }
@@ -138,48 +175,48 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.Play("VAttack");
         }
-        else if (isJumping && VTransformed && !isDodging)
+        else if (canMove && isJumping && VTransformed && !isDodging)
         {
             animator.Play("VJump");
         }
-        else if (horizontal > 0.1 && isJumping == false && !isDodging && VTransformed || horizontal < -0.1 && isJumping == false && !isDodging && VTransformed)
+        else if (canMove && horizontal > 0.1 && isJumping == false && !isDodging && VTransformed || canMove && horizontal < -0.1 && isJumping == false && !isDodging && VTransformed)
         {   
             animator.Play("VWalk");
         }
-        else if (horizontal < 0.1 && isJumping == false && !isDodging && !playerCombat.isAttacking && VTransformed || horizontal > -0.1 && isJumping == false && !isDodging&& !playerCombat.isAttacking && VTransformed)
+        else if (canMove && horizontal < 0.1 && isJumping == false && !isDodging && !playerCombat.isAttacking && VTransformed || canMove && horizontal > -0.1 && isJumping == false && !isDodging&& !playerCombat.isAttacking && VTransformed)
         {
             animator.Play("VStand");
         }
-        if (isDodging && VTransformed)
+        if (canMove && isDodging && VTransformed)
         {
             animator.Play("VDash");
         }
         /// wolf anims
-        if (isJumping && playerCombat.isAttacking && WTransformed)
+        if (canMove && isJumping && playerCombat.isAttacking && WTransformed)
         {
             animator.Play("WAirAttack");
         }
-        else if (horizontal > 0.1 && isJumping == false && playerCombat.isAttacking && WTransformed || horizontal < -0.1 && isJumping == false && playerCombat.isAttacking && WTransformed)
+        else if (canMove && horizontal > 0.1 && isJumping == false && playerCombat.isAttacking && WTransformed || canMove && horizontal < -0.1 && isJumping == false && playerCombat.isAttacking && WTransformed)
         {
             animator.Play("WWalkingAttack");
         }
-        else if (playerCombat.isAttacking && WTransformed)
+        else if (canMove && playerCombat.isAttacking && WTransformed)
         {
             animator.Play("WAttack");
         }
-        else if (isJumping && WTransformed && !isDodging)
+        else if (canMove && isJumping && WTransformed && !isDodging)
         {
             animator.Play("WJump");
         }
-        else if (horizontal > 0.1 && isJumping == false && !isDodging && WTransformed || horizontal < -0.1 && isJumping == false && !isDodging && WTransformed)
+        else if (canMove && horizontal > 0.1 && isJumping == false && !isDodging && WTransformed || canMove && horizontal < -0.1 && isJumping == false && !isDodging && WTransformed)
         {
             animator.Play("WWalk");
         }
-        else if (horizontal < 0.1 && isJumping == false && !isDodging && !playerCombat.isAttacking && WTransformed || horizontal > -0.1 && isJumping == false && !isDodging && !playerCombat.isAttacking && WTransformed)
+        else if (canMove && horizontal < 0.1 && isJumping == false && !isDodging && !playerCombat.isAttacking && WTransformed || canMove && horizontal > -0.1 && isJumping == false && !isDodging && !playerCombat.isAttacking && WTransformed)
         {
             animator.Play("WStand");
         }
-        if (isDodging && WTransformed)
+        if (canMove && isDodging && WTransformed)
         {
             animator.Play("WDash");
         }
@@ -212,7 +249,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (!isDodging)
             {
-                rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+                rb.velocity = new Vector2(horizontal * walkSpeed, rb.velocity.y);
             }
 
             if (isDodging)
@@ -256,21 +293,11 @@ public class PlayerMovement : MonoBehaviour
         #endregion // problem currently where it sets grounded right after jumping
         
     }
-    private void FixedUpdate()
-    {
-        
-
-    }
-
     public void Move(Vector2 context)
     {
-        
         horizontal = context.x;
         vertical = context.y;
     }
-
-
-
     private void Flip()
     {
         isFacingRight = !isFacingRight;
@@ -278,16 +305,11 @@ public class PlayerMovement : MonoBehaviour
         localScale.x *= -1f;
         transform.localScale = localScale;
     }
-
-
-
     public void Jump()
     {
-        
-
-        if (IsGrounded())
+        if (IsGrounded() && canMove)
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+            rb.velocity = new Vector2(rb.velocity.x, jumpPower);
             isJumping = true;
             canGroundCheck = false;
             
@@ -297,9 +319,7 @@ public class PlayerMovement : MonoBehaviour
     private void EnableGroundCheck()
     {
         canGroundCheck = true;
-    }
-     
-       
+    }    
     public void JumpCanceled()
     {
         Debug.Log("canceled");
@@ -307,24 +327,17 @@ public class PlayerMovement : MonoBehaviour
         if (rb.velocity.y > 0f)
             {
                 rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
-
-            }
-        
+            }      
     }
-    
-
     private bool IsGrounded()
     {
 
         return Physics2D.OverlapCircle(groundCheck.position, 0.1f, groundLayer) && canGroundCheck;
     }
-                        
-
-
     public void Dodge ()
     {
         Debug.Log("Dodge!");
-        if(dodgeAvailable)
+        if(dodgeAvailable && canMove)
         {
             isDodging = true;
             dodgeAvailable = false;
@@ -338,47 +351,57 @@ public class PlayerMovement : MonoBehaviour
 	   
         }
         StartCoroutine(DodgeTimerCoroutine());
-    }
-       
-        
-        
+    }                    
     public void VTransform()
     {
-        if (transformCooldown <= 0)
+        if (cooldown <= 0)
         {
+            StartCoroutine(VTransforming());
+            // transforms correct
             VTransformed = true;
             WTransformed = false;
             HTransformed = false;
+            canMove = false;
             Debug.Log("Vtransform");
             animator.Play("Transform");
-            transformCooldown = 10;
+            cooldown = vCooldown;
             //vampire movment values
-            dodgeSpeed = 5;
-            jumpingPower = 4.4f;
-            speed = 1.5f;
-            playerCombat.attackRange = 4f;
-            
-            
+            playerHealth.maxHealth = vHP;
+            walkSpeed = vWalkSpeed;
+            jumpPower = vJumpPower;
+            dodgeSpeed = vDodgeSpeed;
+            playerCombat.attackRange = vAttackRange;
+        }
+        IEnumerator VTransforming()
+        {
+            yield return new WaitForSeconds(0.55f);
+            canMove = true;
         }
     }
-
-
-
     public void WTransform()
     {
-        if (transformCooldown <= 0)
+        if (cooldown <= 0)
         {
+            StartCoroutine(WTransforming());
+            // transforms correct
             WTransformed = true;
             HTransformed = false;
             VTransformed = false;
+            canMove = false;
             Debug.Log("Wtransform");
             animator.Play("Transform 0");
-            transformCooldown = 10;
+            cooldown = wCooldown;
             //wolf movement values
-            dodgeSpeed = 2;
-            jumpingPower = 3.4f;
-            speed = 0.7f;
-            
+            playerHealth.maxHealth = wHP;
+            walkSpeed = wWalkSpeed;
+            jumpPower = wJumpPower;
+            dodgeSpeed = wDodgeSpeed;
+            playerCombat.attackRange = wAttackRange;
+        }
+        IEnumerator WTransforming()
+        {
+            yield return new WaitForSeconds(0.55f);
+            canMove = true;
         }
     }
 

@@ -10,16 +10,16 @@ public class PlayerHealth : MonoBehaviour
 {
     public static event Action OnPlayerDamaged;
     public AudioSource DeathSound;
-    public Animator animator;
-    public PlayerMovement pm;
-    [SerializeField]
-    public int maxHealth = 8;
+    Animator animator;
+    public PlayerMovement playerMovement;
+    public int maxHealth;
     public int currentHealth;
     [SerializeField]
     private TMP_Text healthText;
     public bool dead = false;
     void Start()
     {
+        animator = GetComponent<Animator>();
         currentHealth = maxHealth;
         healthText.text = currentHealth.ToString();
     }
@@ -49,7 +49,7 @@ public class PlayerHealth : MonoBehaviour
             DeathSound.Play();
             animator.Play("Hit");
             dead = true;
-            pm.canMove = false;
+            
            
             
 
