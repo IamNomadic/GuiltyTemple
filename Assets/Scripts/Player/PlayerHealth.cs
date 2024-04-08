@@ -10,23 +10,44 @@ public class PlayerHealth : MonoBehaviour
 {
     public static event Action OnPlayerDamaged;
     public AudioSource DeathSound;
-    public Animator animator;
-    public PlayerMovement pm;
-    [SerializeField]
-    public int maxHealth = 8;
+    Animator animator;
+    public PlayerMovement playerMovement;
+    public int maxHealth;
     public int currentHealth;
+    float healthToBe;
+    [SerializeField]
+    bool delayingRegen;
     [SerializeField]
     private TMP_Text healthText;
     public bool dead = false;
     void Start()
     {
+        animator = GetComponent<Animator>();
         currentHealth = maxHealth;
         healthText.text = currentHealth.ToString();
+        delayingRegen = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+       
+            if (currentHealth >= maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+        if (playerMovement.WTransformed && currentHealth < maxHealth && !delayingRegen)
+        {
+            currentHealth += 1;
+            StartCoroutine(RegenDelay());
+            delayingRegen = true;
+            Debug.Log("called");
+        }
+        IEnumerator RegenDelay()
+        {
+            yield return new WaitForSeconds(1);
+            delayingRegen = false;
+        }
 
     }
     IEnumerator LevelReset ()
@@ -35,7 +56,7 @@ public class PlayerHealth : MonoBehaviour
         Debug.Log("called");
         dead = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        
+        playerMovement.canMove = true;
     }
     public void TakeDamage(int damage)
     {
@@ -49,7 +70,8 @@ public class PlayerHealth : MonoBehaviour
             DeathSound.Play();
             animator.Play("Hit");
             dead = true;
-            pm.canMove = false;
+            playerMovement.canMove = false;
+            
            
             
 

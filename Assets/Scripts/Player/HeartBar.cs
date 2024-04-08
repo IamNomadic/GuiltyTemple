@@ -6,15 +6,24 @@ public class HeartBar : MonoBehaviour
 {
     public GameObject heartPrefab;
     public PlayerHealth playerHealth;
+    public PlayerMovement playerMovement;
+    public PlayerCombat playerCombat;
     List<HealthHeart> hearts = new List<HealthHeart>();
 
     private void OnEnable()
     {
         PlayerHealth.OnPlayerDamaged += DrawHearts;
+        PlayerMovement.OnPlayerDamaged += DrawHearts;
+        PlayerCombat.OnPlayerDamaged += DrawHearts;
+
     }
     private void OnDisable()
     {
         PlayerHealth.OnPlayerDamaged -= DrawHearts;
+        PlayerMovement.OnPlayerDamaged -= DrawHearts;
+        PlayerCombat.OnPlayerDamaged -= DrawHearts;
+
+
     }
     private void Start()
     {

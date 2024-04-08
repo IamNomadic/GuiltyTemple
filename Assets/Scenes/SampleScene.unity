@@ -1310,6 +1310,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   heartPrefab: {fileID: 6686056212954750932, guid: 20b80a9e564172a4da79d61b4a80c54f, type: 3}
   playerHealth: {fileID: 1695626991}
+  playerMovement: {fileID: 0}
+  playerCombat: {fileID: 0}
 --- !u!1 &1303819060
 GameObject:
   m_ObjectHideFlags: 0
@@ -1908,6 +1910,18 @@ PrefabInstance:
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: hHP
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: vHP
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: wHP
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
       propertyPath: speed
       value: 1
       objectReference: {fileID: 0}
@@ -1916,8 +1930,56 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1695626985}
     - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: vCooldown
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: wCooldown
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
       propertyPath: dodgeSpeed
       value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: hJumpPower
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: hWalkSpeed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: vJumpPower
+      value: 3.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: vWalkSpeed
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: wJumpPower
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: wWalkSpeed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: hDodgeSpeed
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: vDodgeSpeed
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: wDodgeSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: hAttackRange
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
       propertyPath: jumpingPower
@@ -1931,6 +1993,14 @@ PrefabInstance:
       propertyPath: playercombat
       value: 
       objectReference: {fileID: 1695626999}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: vAttackRange
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5263318199318816682, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
+      propertyPath: wAttackRange
+      value: 0.6
+      objectReference: {fileID: 0}
     - target: {fileID: 5263318199318816683, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
       propertyPath: m_ActionEvents.Array.size
       value: 17
