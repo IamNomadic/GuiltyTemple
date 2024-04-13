@@ -10,6 +10,12 @@ public class StartMenu : MonoBehaviour
     public AudioClip StartSFX;
     public AudioClip ButtonHover;
     public AudioClip ButtonPressed;
+    [SerializeField]
+    GameObject optionsMenu;
+    private void Start()
+    {
+        optionsMenu.SetActive(false);
+    }
     public void OnPlayButton()
     {
         Source.PlayOneShot(ButtonPressed);
@@ -23,6 +29,7 @@ public class StartMenu : MonoBehaviour
     public void OnOptionsButton()
     {
         Source.PlayOneShot(ButtonPressed);
+        StartCoroutine(OpenOptions());
     }
     public void OnExitButton()
     {
@@ -37,7 +44,8 @@ public class StartMenu : MonoBehaviour
     }
     IEnumerator OpenOptions()
     {
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(.2f);
+        optionsMenu.SetActive(true);
     }
     IEnumerator ExitGame()
     {
