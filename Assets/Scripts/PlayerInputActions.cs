@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class PlayerInputActions : MonoBehaviour
 {
+    
+    private PlayerMovement playerController;
+    private PlayerCombat playerCombatController;
     private PauseMenu pauseMenu;
     private PlayerCombat playerCombatController;
 
@@ -19,9 +22,10 @@ public class PlayerInputActions : MonoBehaviour
     {
         playerController = GetComponent<PlayerMovement>();
         playerCombatController = GetComponent<PlayerCombat>();
+        
 
 
-        if (playerInput == null)
+        if (playerInput == null ) 
         {
             playerInput = new PlayerInputs();
             playerInput.Player.Move.performed += i => playerController.Move(i.ReadValue<Vector2>());

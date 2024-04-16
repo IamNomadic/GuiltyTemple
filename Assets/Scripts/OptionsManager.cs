@@ -13,6 +13,7 @@ public class OptionsManager : MonoBehaviour
 
     private void Start()
     {
+        optionsMenu.SetActive(false);
         musicSlider.value = 100;
     }
 
