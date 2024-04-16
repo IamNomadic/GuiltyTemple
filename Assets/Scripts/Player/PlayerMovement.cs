@@ -349,6 +349,7 @@ public class PlayerMovement : MonoBehaviour
         dodgeSpeed = hDodgeSpeed;
         playerCombat.attackRange = hAttackRange;
         HTransformed = true;
+        playerCombat.isAttacking = false;
         StartCoroutine(VDetrans());
         IEnumerator VDetrans()
         {
@@ -371,6 +372,7 @@ public class PlayerMovement : MonoBehaviour
         dodgeSpeed = hDodgeSpeed;
         playerCombat.attackRange = hAttackRange;
         HTransformed = true;
+        playerCombat.isAttacking = false;
         StartCoroutine(WDetrans());
         IEnumerator WDetrans()
         {
