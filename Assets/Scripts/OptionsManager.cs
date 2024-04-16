@@ -14,6 +14,7 @@ public class OptionsManager : MonoBehaviour
     public AudioSource Source;
     void Start()
     {
+        optionsMenu.SetActive(false);
         musicSlider.value = 100;
     }
     public void ChangeVolume()

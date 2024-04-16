@@ -8,6 +8,7 @@ public class PlayerInputActions : MonoBehaviour
     
     private PlayerMovement playerController;
     private PlayerCombat playerCombatController;
+    [SerializeField]
     private PauseMenu pauseMenu;
 
     PlayerInputs playerInput;
@@ -16,7 +17,7 @@ public class PlayerInputActions : MonoBehaviour
     {
         playerController = GetComponent<PlayerMovement>();
         playerCombatController = GetComponent<PlayerCombat>();
-
+        
 
         if (playerInput == null ) 
         {

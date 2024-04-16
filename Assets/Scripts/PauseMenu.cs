@@ -7,13 +7,14 @@ public class PauseMenu : MonoBehaviour
 {
     public static bool GameIsPaused = false;
     public GameObject PauseUi;
+    public GameObject OptionsMenu;
     public AudioSource Source;
     public AudioClip ButtonHover;
     public AudioClip ButtonPressed;
 
     public void Pause()
     {
-        if (GameIsPaused)
+        if(GameIsPaused)
         {
             ResumeGame();
         }
@@ -43,6 +44,11 @@ public class PauseMenu : MonoBehaviour
         Source.PlayOneShot(ButtonPressed);
         ResumeGame();
     }
+    public void OnOptionsButton()
+    {
+        Source.PlayOneShot(ButtonPressed);
+        OpenOptions();
+    }
     public void OnRestartButton()
     {
         Source.PlayOneShot(ButtonPressed);
@@ -63,6 +69,11 @@ public class PauseMenu : MonoBehaviour
     {
         yield return new WaitForSeconds(.5f);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+    void OpenOptions()
+    {
+        
+        OptionsMenu.SetActive(true);
     }
 }
 
