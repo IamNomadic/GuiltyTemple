@@ -42,6 +42,8 @@ public class PlayerHealth : MonoBehaviour
             StartCoroutine(RegenDelay());
             delayingRegen = true;
             Debug.Log("called");
+            OnPlayerDamaged?.Invoke();
+
         }
         IEnumerator RegenDelay()
         {
