@@ -80,7 +80,7 @@ public class Enemy : MonoBehaviour
     //state machine setup
     public enum Behavior
     {
-        idle, patrol, pursuit, attack, knockback, die
+        idle, patrol, pursuit, attack, knockback, die, dying
     }
     #region state machine stuff
     public Behavior currentState = Behavior.idle;
@@ -151,8 +151,11 @@ public class Enemy : MonoBehaviour
                     break;
                 case Behavior.die:
                     Die();
-                interruptState = false;
-                isStateFinished = false;
+                    ///interruptState = false;
+                    //isStateFinished = false;
+                    break;
+                case Behavior.dying:
+                    Debug.Log("Death is upon us");
                     break;
             }
         
@@ -440,10 +443,14 @@ public class Enemy : MonoBehaviour
 
     protected void Die()
     {
+        nextState = Behavior.dying;
+        interruptState = true;
+        isStateFinished = true;
+        Debug.Log("We are still dying");
         animator.Play("Die");          //away with us
-        interruptState = false;
+        //interruptState = false;
         rb.gravityScale = 1;
-
+        StartCoroutine(Death());
         /*  I feel like we want to just make the collider ignore the player rather than destroying anything
         rb.velocity = new Vector2(0, 0);
         rb.gravityScale = 0;
@@ -454,7 +461,21 @@ public class Enemy : MonoBehaviour
         */
         //if we have a dead sprite for these enemies we can just disable here instead to leave the body
     }
-
+    IEnumerator Death()
+    {
+        yield return new WaitForSeconds(1);
+        float alphaBlendTime = 100f;
+        for (int i = 0; i < alphaBlendTime; i++)
+        {
+            float alpha = 1.0f - (float)i / alphaBlendTime;
+            SpriteRenderer spriteRender = GetComponent<SpriteRenderer>();
+            spriteRender.material.color = new Color(spriteRender.material.color.r, spriteRender.material.color.g, spriteRender.material.color.b, alpha);
+            Debug.LogFormat("I is {0}", i);
+            yield return new WaitForFixedUpdate();
+        }
+        Debug.Log("We made it");
+        Destroy(this.gameObject); 
+    }
     protected bool PlayerInSight()
     {
         RaycastHit2D hit = Physics2D.CircleCast(enemyCollider.bounds.center, detectionRange, Vector2.right, 0, playerLayer); //constant vigilance
