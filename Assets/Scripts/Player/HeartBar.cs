@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,71 +7,55 @@ public class HeartBar : MonoBehaviour
     public PlayerHealth playerHealth;
     public PlayerMovement playerMovement;
     public PlayerCombat playerCombat;
-    List<HealthHeart> hearts = new List<HealthHeart>();
+    private List<HealthHeart> hearts = new();
+
+    private void Start()
+    {
+        DrawHearts();
+    }
 
     private void OnEnable()
     {
         PlayerHealth.OnPlayerDamaged += DrawHearts;
         PlayerMovement.OnPlayerDamaged += DrawHearts;
         PlayerCombat.OnPlayerDamaged += DrawHearts;
-
     }
+
     private void OnDisable()
     {
         PlayerHealth.OnPlayerDamaged -= DrawHearts;
         PlayerMovement.OnPlayerDamaged -= DrawHearts;
         PlayerCombat.OnPlayerDamaged -= DrawHearts;
-
-
-    }
-    private void Start()
-    {
-        DrawHearts();
-        
     }
 
     public void DrawHearts()
     {
         ClearHearts();
         float maxHealthRemainder = playerHealth.maxHealth % 2;
-        int heartsToMake = (int)((playerHealth.maxHealth / 2) + maxHealthRemainder);
-        for(int i = 0; i < heartsToMake; i++)
+        var heartsToMake = (int)(playerHealth.maxHealth / 2 + maxHealthRemainder);
+        for (var i = 0; i < heartsToMake; i++) CreateEmptyHeart();
+        for (var i = 0; i < hearts.Count; i++)
         {
-            CreateEmptyHeart();
-        }
-        for (int i = 0; i < hearts.Count; i++)
-        {
-            int heartStatusRemainder = (int)Mathf.Clamp(playerHealth.currentHealth - (i*2),0,2);
+            var heartStatusRemainder = Mathf.Clamp(playerHealth.currentHealth - i * 2, 0, 2);
             hearts[i].SetHeartImage((HeartStatus)heartStatusRemainder);
         }
     }
 
 
-
-
     public void CreateEmptyHeart()
     {
-        GameObject newHeart = Instantiate(heartPrefab);
-        newHeart.transform.SetParent(transform);  
+        var newHeart = Instantiate(heartPrefab);
+        newHeart.transform.SetParent(transform);
         newHeart.transform.localScale = Vector3.one;
-        HealthHeart heartComponent = newHeart.GetComponent<HealthHeart>();
+        var heartComponent = newHeart.GetComponent<HealthHeart>();
         heartComponent.SetHeartImage(HeartStatus.Empty);
         hearts.Add(heartComponent);
     }
 
 
-
     public void ClearHearts()
     {
-        foreach(Transform t in transform)
-        {
-            Destroy(t.gameObject);
-        }
+        foreach (Transform t in transform) Destroy(t.gameObject);
         hearts = new List<HealthHeart>();
     }
-
-
-
-
-
 }

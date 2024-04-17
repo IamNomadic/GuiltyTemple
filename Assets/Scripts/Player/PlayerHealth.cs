@@ -1,26 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using UnityEngine.SceneManagement;
 using System;
+using System.Collections;
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public static event Action OnPlayerDamaged;
     public AudioSource DeathSound;
-    Animator animator;
     public PlayerMovement playerMovement;
     public int maxHealth;
     public int currentHealth;
-    float healthToBe;
-    [SerializeField]
-    bool delayingRegen;
-    [SerializeField]
-    private TMP_Text healthText;
-    public bool dead = false;
-    void Start()
+
+    [SerializeField] private bool delayingRegen;
+
+    [SerializeField] private TMP_Text healthText;
+
+    public bool dead;
+    private Animator animator;
+    private float healthToBe;
+
+    private void Start()
     {
         animator = GetComponent<Animator>();
         currentHealth = maxHealth;
@@ -29,13 +28,9 @@ public class PlayerHealth : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-       
-            if (currentHealth >= maxHealth)
-        {
-            currentHealth = maxHealth;
-        }
+        if (currentHealth >= maxHealth) currentHealth = maxHealth;
         if (playerMovement.WTransformed && currentHealth < maxHealth && !delayingRegen)
         {
             currentHealth += 1;
@@ -43,16 +38,18 @@ public class PlayerHealth : MonoBehaviour
             delayingRegen = true;
             Debug.Log("called");
             OnPlayerDamaged?.Invoke();
-
         }
+
         IEnumerator RegenDelay()
         {
             yield return new WaitForSeconds(1);
             delayingRegen = false;
         }
-
     }
-    IEnumerator LevelReset ()
+
+    public static event Action OnPlayerDamaged;
+
+    private IEnumerator LevelReset()
     {
         yield return new WaitForSeconds(2);
         Debug.Log("called");
@@ -60,6 +57,7 @@ public class PlayerHealth : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         playerMovement.canMove = true;
     }
+
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
@@ -73,10 +71,6 @@ public class PlayerHealth : MonoBehaviour
             animator.Play("Hit");
             dead = true;
             playerMovement.canMove = false;
-            
-           
-            
-
-        } 
+        }
     }
 }

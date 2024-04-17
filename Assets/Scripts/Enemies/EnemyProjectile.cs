@@ -1,23 +1,23 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyProjectile : MonoBehaviour
 {
-    Rigidbody2D rb;
-    bool exploding = false;
-    [SerializeField]
-    float deathTime; //how long does the explosion animation take
-    Vector2 direction;
-    float speed;
-    int hitDamage;
-    void Start()
+    [SerializeField] private float deathTime; //how long does the explosion animation take
+
+    private Vector2 direction;
+    private bool exploding;
+    private int hitDamage;
+    private Rigidbody2D rb;
+    private float speed;
+
+    private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         rb.velocity = direction * speed;
     }
@@ -35,6 +35,7 @@ public class EnemyProjectile : MonoBehaviour
         {
             //send damage to the player            
         }
+
         Destroy(gameObject);
         if (!exploding)
         {
@@ -42,11 +43,11 @@ public class EnemyProjectile : MonoBehaviour
             exploding = true;
             rb.velocity = new Vector2(0, 0);
         }
+
         //play explosion animation or somesuch
         IEnumerator DeathTimer()
         {
             yield return new WaitForSeconds(deathTime);
-
         }
     }
 }
