@@ -1,24 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 
 public class PlayerInputActions : MonoBehaviour
 {
-    
-    private PlayerMovement playerController;
-    private PlayerCombat playerCombatController;
     private PauseMenu pauseMenu;
+    private PlayerCombat playerCombatController;
 
-    PlayerInputs playerInput;
+    private PlayerMovement playerController;
+
+    private PlayerInputs playerInput;
+
+    // Update is called once per frame
+    private void Update()
+    {
+    }
+
     // Start is called before the first frame update
-    void OnEnable()
+    private void OnEnable()
     {
         playerController = GetComponent<PlayerMovement>();
         playerCombatController = GetComponent<PlayerCombat>();
 
 
-        if (playerInput == null ) 
+        if (playerInput == null)
         {
             playerInput = new PlayerInputs();
             playerInput.Player.Move.performed += i => playerController.Move(i.ReadValue<Vector2>());
@@ -29,18 +32,8 @@ public class PlayerInputActions : MonoBehaviour
             playerInput.Player.Dodge.performed += i => playerController.Dodge();
             playerInput.Player.Fire.performed += i => playerCombatController.Attack();
             playerInput.Player.Pause.performed += i => pauseMenu.Pause();
-
-
-
         }
+
         playerInput.Enable();
-
-
-    }
-    
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
