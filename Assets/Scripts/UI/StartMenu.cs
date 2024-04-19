@@ -8,7 +8,11 @@ public class StartMenu : MonoBehaviour
     public AudioClip StartSFX;
     public AudioClip ButtonHover;
     public AudioClip ButtonPressed;
-
+    public GameObject OptionsMenu;
+    private void Start()
+    {
+        OptionsMenu.SetActive(false);
+    }
     public void OnPlayButton()
     {
         Source.PlayOneShot(ButtonPressed);
@@ -42,12 +46,13 @@ public class StartMenu : MonoBehaviour
 
     private IEnumerator OpenOptions()
     {
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(.2f);
+        OptionsMenu.SetActive(true);
     }
 
     private IEnumerator ExitGame()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(.5f);
         Debug.Log("Exited Game");
         Application.Quit();
     }

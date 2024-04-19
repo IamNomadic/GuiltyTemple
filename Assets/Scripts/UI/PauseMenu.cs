@@ -10,7 +10,6 @@ public class PauseMenu : MonoBehaviour
     public AudioSource Source;
     public AudioClip ButtonHover;
     public AudioClip ButtonPressed;
-    public GameObject OptionsMenu;
 
     public void Pause()
     {
@@ -43,11 +42,6 @@ public class PauseMenu : MonoBehaviour
     {
         Source.PlayOneShot(ButtonPressed);
         ResumeGame();
-    }
-    public void OnOptionsButton()
-    {
-        Source.PlayOneShot(ButtonPressed);
-        OpenOptions();
     }
     public void OnRestartButton()
     {
