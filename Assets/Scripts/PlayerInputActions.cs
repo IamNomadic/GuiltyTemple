@@ -5,11 +5,8 @@ public class PlayerInputActions : MonoBehaviour
     
     private PlayerMovement playerController;
     private PlayerCombat playerCombatController;
+    [SerializeField]
     private PauseMenu pauseMenu;
-    private PlayerCombat playerCombatController;
-
-    private PlayerMovement playerController;
-
     private PlayerInputs playerInput;
 
     // Update is called once per frame
@@ -22,8 +19,6 @@ public class PlayerInputActions : MonoBehaviour
     {
         playerController = GetComponent<PlayerMovement>();
         playerCombatController = GetComponent<PlayerCombat>();
-        
-
 
         if (playerInput == null ) 
         {

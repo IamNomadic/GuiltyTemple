@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -7,13 +9,14 @@ public class PauseMenu : MonoBehaviour
     public AudioSource Source;
     public AudioClip ButtonHover;
     public AudioClip ButtonPressed;
-
+    public GameObject OptionsMenu;
 
     public void Pause()
     {
         if (GameIsPaused)
         {
             ResumeGame();
+        }
         else
             PauseGame();
     }
@@ -45,11 +48,22 @@ public class PauseMenu : MonoBehaviour
         Source.PlayOneShot(ButtonPressed);
         StartCoroutine(RestartGame());
     }
+    public void OnOptionsButton()
+    {
+        Source.PlayOneShot(ButtonPressed);
+        StartCoroutine(OpenOptions());
+    }
     public void OnExitButton()
     {
         Source.PlayOneShot(ButtonPressed);
         StartCoroutine(ExitGame());
     }
+    public void OnDeathExit()
+    {
+        Source.PlayOneShot(ButtonPressed);
+        StartCoroutine(ReturnToTitle());
+    }
+    
     IEnumerator ExitGame()
     {
         yield return new WaitForSeconds(1f);
@@ -58,7 +72,17 @@ public class PauseMenu : MonoBehaviour
     }
     IEnumerator RestartGame()
     {
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(0f);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+    IEnumerator OpenOptions()
+    {
+        yield return new WaitForSeconds(0f);
+        OptionsMenu.SetActive(true);
+    }
+    IEnumerator ReturnToTitle()
+    {
+        yield return new WaitForSeconds(0f);
+        SceneManager.LoadScene("StartScreen");
     }
 }
