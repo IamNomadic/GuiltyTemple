@@ -77,6 +77,8 @@ public class Enemy : MonoBehaviour
                 break;
             case Behavior.dying:
                 Debug.Log("Death is upon us");
+                interruptState = false;
+                isStateFinished = false;
                 break;
         }
     }
@@ -315,23 +317,14 @@ public class Enemy : MonoBehaviour
 
     protected void Die()
     {
+        StopAllCoroutines();
         nextState = Behavior.dying;
-        interruptState = true;
-        isStateFinished = true;
+        interruptState = false;
         Debug.Log("We are still dying");
         animator.Play("Die"); //away with us
-        //interruptState = false;
         rb.gravityScale = 1;
         StartCoroutine(Death());
-        /*  I feel like we want to just make the collider ignore the player rather than destroying anything
-        rb.velocity = new Vector2(0, 0);
-        rb.gravityScale = 0;
-        foreach (Collider2D Collider2D in gameObject.GetComponents<Collider2D>())
-        {
-            Destroy(Collider2D);
-        }
-        */
-        //if we have a dead sprite for these enemies we can just disable here instead to leave the body
+        isStateFinished = true;
     }
 
     private IEnumerator Death()
