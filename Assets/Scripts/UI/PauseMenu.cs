@@ -6,6 +6,7 @@ public class PauseMenu : MonoBehaviour
 {
     public static bool GameIsPaused;
     public GameObject PauseUi;
+    public GameObject OptionsMenu;
     public AudioSource Source;
     public AudioClip ButtonHover;
     public AudioClip ButtonPressed;
@@ -13,7 +14,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Pause()
     {
-        if (GameIsPaused)
+        if(GameIsPaused)
         {
             ResumeGame();
         }
@@ -42,6 +43,11 @@ public class PauseMenu : MonoBehaviour
     {
         Source.PlayOneShot(ButtonPressed);
         ResumeGame();
+    }
+    public void OnOptionsButton()
+    {
+        Source.PlayOneShot(ButtonPressed);
+        OpenOptions();
     }
     public void OnRestartButton()
     {

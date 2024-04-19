@@ -19,6 +19,7 @@ public class PlayerInputActions : MonoBehaviour
     {
         playerController = GetComponent<PlayerMovement>();
         playerCombatController = GetComponent<PlayerCombat>();
+        
 
         if (playerInput == null ) 
         {
