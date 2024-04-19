@@ -10,6 +10,7 @@ public class EnemyProjectile : MonoBehaviour
     private int hitDamage;
     private Rigidbody2D rb;
     private float speed;
+    private bool hit = false;
 
     private void Start()
     {
@@ -20,6 +21,10 @@ public class EnemyProjectile : MonoBehaviour
     private void Update()
     {
         rb.velocity = direction * speed;
+        if (!GetComponent<Renderer>().isVisible || hit == true)
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void BeThrown(Vector2 throwDirection, float throwSpeed, int damage) //yeet
@@ -31,24 +36,12 @@ public class EnemyProjectile : MonoBehaviour
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("projectile colliding");
         if (collision.gameObject.tag == "Player")
         {
-            //send damage to the player            
+            hit = true;
+            collision.gameObject.GetComponent<PlayerHealth>().TakeDamage(hitDamage);
         }
 
-        Destroy(gameObject);
-        if (!exploding)
-        {
-            StartCoroutine(DeathTimer());
-            exploding = true;
-            rb.velocity = new Vector2(0, 0);
-        }
-
-        //play explosion animation or somesuch
-        IEnumerator DeathTimer()
-        {
-            yield return new WaitForSeconds(deathTime);
-        }
     }
+
 }
