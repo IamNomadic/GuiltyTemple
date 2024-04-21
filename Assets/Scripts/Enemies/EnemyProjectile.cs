@@ -29,8 +29,9 @@ public class EnemyProjectile : MonoBehaviour
         hitDamage = damage;
     }
 
-    public void OnCollision(Collision collision)
+    public void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log("projectile colliding");
         if (collision.gameObject.tag == "Player")
         {
             //send damage to the player            

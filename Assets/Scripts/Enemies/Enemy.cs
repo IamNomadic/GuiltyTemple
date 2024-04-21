@@ -114,6 +114,51 @@ public class Enemy : MonoBehaviour
             nextState = Behavior.idle;
         }
 
+    protected void Update()
+    {
+        /*
+        if (PlayerInSight())
+        {
+            {
+                Debug.Log("spotted");
+            }
+        }
+        */
+
+        if (currentState != nextState && (isStateFinished || interruptState))
+        {
+            currentState = nextState;
+            isStateFinished = false;
+        }
+
+        switch (currentState)
+        {
+            case Behavior.idle:
+                Idle();
+                break;
+            case Behavior.patrol:
+                Patrol();
+                break;
+            case Behavior.pursuit:
+                Pursuit();
+                break;
+            case Behavior.attack:
+                Attack();
+                break;
+            case Behavior.knockback:
+                Knockback();
+                break;
+            case Behavior.die:
+                Die();
+                ///interruptState = false;
+                //isStateFinished = false;
+                break;
+            case Behavior.dying:
+                Debug.Log("Death is upon us");
+                interruptState = false;
+                isStateFinished = false;
+                break;
+        }
     }
     protected void Update()
     {
@@ -440,19 +485,14 @@ public class Enemy : MonoBehaviour
 
     protected void Die()
     {
-        animator.Play("Die");          //away with us
+        StopAllCoroutines();
+        nextState = Behavior.dying;
         interruptState = false;
+        Debug.Log("We are still dying");
+        animator.Play("Die"); //away with us
         rb.gravityScale = 1;
-
-        /*  I feel like we want to just make the collider ignore the player rather than destroying anything
-        rb.velocity = new Vector2(0, 0);
-        rb.gravityScale = 0;
-        foreach (Collider2D Collider2D in gameObject.GetComponents<Collider2D>())
-        {
-            Destroy(Collider2D);
-        }
-        */
-        //if we have a dead sprite for these enemies we can just disable here instead to leave the body
+        StartCoroutine(Death());
+        isStateFinished = true;
     }
 
     protected bool PlayerInSight()

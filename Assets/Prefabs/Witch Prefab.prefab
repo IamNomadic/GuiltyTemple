@@ -52,7 +52,7 @@ MonoBehaviour:
   playerObject: {fileID: 0}
   playerHealth: {fileID: 0}
   animator: {fileID: 3658180884944433459}
-  enemyMaxHealth: 0
+  enemyMaxHealth: 3
   inKnockback: 0
   knockbackTimer: 0.4
   isFlier: 0
