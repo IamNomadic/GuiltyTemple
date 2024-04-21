@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class EnemyProjectile : MonoBehaviour
 {
-    Rigidbody2D rb;
-    bool exploding = false;
-    [SerializeField]
-    float deathTime; //how long does the explosion animation take
-    Vector2 direction;
-    float speed;
-    int hitDamage;
-    void Start()
+    [SerializeField] private float deathTime; //how long does the explosion animation take
+
+    private Vector2 direction;
+    private bool exploding;
+    private int hitDamage;
+    private Rigidbody2D rb;
+    private float speed;
+    private bool hit = false;
+
+    private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
     }
@@ -20,6 +22,10 @@ public class EnemyProjectile : MonoBehaviour
     void Update()
     {
         rb.velocity = direction * speed;
+        if (!GetComponent<Renderer>().isVisible || hit == true)
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void BeThrown(Vector2 throwDirection, float throwSpeed, int damage) //yeet
@@ -31,23 +37,12 @@ public class EnemyProjectile : MonoBehaviour
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("projectile colliding");
         if (collision.gameObject.tag == "Player")
         {
-            //send damage to the player            
+            hit = true;
+            collision.gameObject.GetComponent<PlayerHealth>().TakeDamage(hitDamage);
         }
-        Destroy(gameObject);
-        if (!exploding)
-        {
-            StartCoroutine(DeathTimer());
-            exploding = true;
-            rb.velocity = new Vector2(0, 0);
-        }
-        //play explosion animation or somesuch
-        IEnumerator DeathTimer()
-        {
-            yield return new WaitForSeconds(deathTime);
 
-        }
     }
+
 }
