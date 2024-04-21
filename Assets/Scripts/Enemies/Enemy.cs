@@ -4,6 +4,86 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+
+
+    //note to self; enemy class > enemy types will be children with variables like damage, health, range, etc changed
+
+    #region player stuff
+
+    [SerializeField] //get our player stuff first
+    protected Object playerObject; // who is your daddy
+    [SerializeField] protected PlayerHealth playerHealth; // what does he do
+
+    #endregion
+
+    #region Enemy properties
+
+    [SerializeField] protected Animator animator;
+    [SerializeField] protected int enemyMaxHealth;
+
+    protected int enemyCurrentHealth;
+    protected BoxCollider2D enemyCollider; //gotta check if any of these need to be culled when I'm done here
+    protected Rigidbody2D rb;
+
+    [SerializeField] public bool inKnockback;
+
+    [SerializeField] protected float knockbackTimer = 0.4f; //how long are we in knockback mode
+
+    protected bool shoved; //has the knockback effect occurred yet
+    protected bool movingRight = true;
+    protected float horizontal;
+    protected float vertical;
+
+    [SerializeField] protected bool isFlier; //is this a flying enemy
+    [SerializeField] protected bool isMeleeAttacker; //whack
+    [SerializeField] protected bool isRangedAttacker; //do we have a ranged attack
+    [SerializeField] protected EnemyProjectile projectile; //what's our projectile if we're a ranged attacker?
+    [SerializeField] protected GameObject projectileSpawn; //where to create the projectile
+    [SerializeField] protected float throwForce = 1;
+
+    #endregion
+
+    #region EnemyAttack
+
+    [SerializeField] public int damage;
+    [SerializeField] protected float attackWindup; //time between starting the attack and enabling the hitbox/projectile
+    [SerializeField] protected float attackCooldown; //total time that the attack will take
+    protected float cooldownTimer = Mathf.Infinity;
+    [SerializeField] protected float moveSpeed = 1;
+    protected bool canAttack = true;
+    [SerializeField] protected float attackRange = 0.3f; //start swinging at this range
+    protected bool hitboxActive; //this is going to link to the animator trigger to link the active hitbox to the animation
+    protected bool attackLanded; //check if this attack has connected so it doesn't stack
+
+    #endregion
+
+    #region Patrol Stuff
+
+    [SerializeField] protected GameObject patrolA; //waypoint 1
+    [SerializeField] protected GameObject patrolB; //waypoint 2
+    [SerializeField] protected float patrolSpeed = 1;
+    protected Transform currentPatrolTarget;
+
+    #endregion
+
+    #region EnemyDetection
+
+    [SerializeField] protected float detectionRange = 1.0f;
+    [SerializeField] protected float colliderDistance;
+    [SerializeField] protected LayerMask playerLayer;
+
+    #endregion
+
+    #region state machine stuff
+
+    public Behavior currentState = Behavior.idle;
+    protected Behavior nextState = Behavior.idle;
+    protected Transform playerTarget; //do we have a target?
+    protected bool isStateFinished = true; //can we proceed to the next state now?
+    protected bool interruptState; //can we interrupt this state?
+    protected bool patrolRoute;
+
+    #endregion
     //state machine setup
     public enum Behavior
     {
@@ -46,7 +126,10 @@ public class Enemy : MonoBehaviour
             }
         }
         */
+        if (hitboxActive && !attackLanded)
+        {
 
+        }
         if (currentState != nextState && (isStateFinished || interruptState))
         {
             currentState = nextState;
@@ -76,7 +159,6 @@ public class Enemy : MonoBehaviour
                 //isStateFinished = false;
                 break;
             case Behavior.dying:
-                Debug.Log("Death is upon us");
                 interruptState = false;
                 isStateFinished = false;
                 break;
@@ -241,7 +323,7 @@ public class Enemy : MonoBehaviour
                     new WaitForSeconds(
                         attackCooldown); //transmit damage to the player here when the player state machine is done
                 //hbSprite.color = Color.white;
-                if (nextState != Behavior.die)
+                if (nextState != Behavior.die && nextState != Behavior.dying)
                 {
                     nextState = Behavior.idle;
                     isStateFinished = true;
@@ -320,7 +402,7 @@ public class Enemy : MonoBehaviour
         StopAllCoroutines();
         nextState = Behavior.dying;
         interruptState = false;
-        Debug.Log("We are still dying");
+        //Debug.Log("We are still dying");
         animator.Play("Die"); //away with us
         rb.gravityScale = 1;
         StartCoroutine(Death());
@@ -337,11 +419,9 @@ public class Enemy : MonoBehaviour
             var spriteRender = GetComponent<SpriteRenderer>();
             spriteRender.material.color = new Color(spriteRender.material.color.r, spriteRender.material.color.g,
                 spriteRender.material.color.b, alpha);
-            Debug.LogFormat("I is {0}", i);
             yield return new WaitForFixedUpdate();
         }
 
-        Debug.Log("We made it");
         Destroy(gameObject);
     }
 
@@ -387,98 +467,30 @@ public class Enemy : MonoBehaviour
         transform.localScale = localScale;
     }
 
-    //note to self; enemy class > enemy types will be children with variables like damage, health, range, etc changed
+    protected void HitboxActive()
+    {
+        Debug.Log("hitbox active");
+        hitboxActive = true;
+        attackLanded = false;
+        gameObject.transform.GetChild(0).gameObject.SetActive(true);
+    }
 
-    #region player stuff
-
-    [SerializeField] //get our player stuff first
-    protected Object playerObject; // who is your daddy
-
-    [SerializeField] protected PlayerHealth playerHealth; // what does he do
-
-    #endregion
-
-    #region Enemy properties
-
-    [SerializeField] protected Animator animator;
-
-    [SerializeField] protected int enemyMaxHealth;
-
-    protected int enemyCurrentHealth;
-    protected BoxCollider2D enemyCollider; //gotta check if any of these need to be culled when I'm done here
-    protected Rigidbody2D rb;
-
-    [SerializeField] public bool inKnockback;
-
-    [SerializeField] protected float knockbackTimer = 0.4f; //how long are we in knockback mode
-
-    protected bool shoved; //has the knockback effect occurred yet
-    protected bool movingRight = true;
-    protected float horizontal;
-    protected float vertical;
-
-    [SerializeField] protected bool isFlier; //is this a flying enemy
-
-    [SerializeField] protected bool isMeleeAttacker; //whack
-
-    [SerializeField] protected bool isRangedAttacker; //do we have a ranged attack
-
-    [SerializeField] protected EnemyProjectile projectile; //what's our projectile if we're a ranged attacker?
-
-    [SerializeField] protected GameObject projectileSpawn; //where to create the projectile
-
-    [SerializeField] protected float throwForce = 1;
-
-    #endregion
-
-    #region EnemyAttack
-
-    [SerializeField] protected int damage;
-
-    [SerializeField] protected float attackWindup; //time between starting the attack and enabling the hitbox/projectile
-
-    [SerializeField] protected float attackCooldown; //total time that the attack will take
-
-    protected float cooldownTimer = Mathf.Infinity;
-
-    [SerializeField] protected float moveSpeed = 1;
-
-    protected bool canAttack = true;
-
-    [SerializeField] protected float attackRange = 0.3f; //start swinging at this range
-
-    #endregion
-
-    #region Patrol Stuff
-
-    [SerializeField] protected GameObject patrolA; //waypoint 1
-
-    [SerializeField] protected GameObject patrolB; //waypoint 2
-
-    [SerializeField] protected float patrolSpeed = 1;
-
-    protected Transform currentPatrolTarget;
-
-    #endregion
-
-    #region EnemyDetection
-
-    [SerializeField] protected float detectionRange = 1.0f;
-
-    [SerializeField] protected float colliderDistance;
-
-    [SerializeField] protected LayerMask playerLayer;
-
-    #endregion
-
-    #region state machine stuff
-
-    public Behavior currentState = Behavior.idle;
-    protected Behavior nextState = Behavior.idle;
-    protected Transform playerTarget; //do we have a target?
-    protected bool isStateFinished = true; //can we proceed to the next state now?
-    protected bool interruptState; //can we interrupt this state?
-    protected bool patrolRoute;
-
-    #endregion
+    public void HitboxInactive()
+    {
+        Debug.Log("hitbox deactivated");
+        hitboxActive = false;
+        attackLanded = false;
+        gameObject.transform.GetChild(0).gameObject.SetActive(false);
+    }
+    /*
+    protected void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Player" && hitboxActive && !attackLanded)
+        {
+            collision.gameObject.GetComponent<PlayerHealth>().TakeDamage(damage);
+            attackLanded = true;
+            hitboxActive = false;
+        }
+    }
+    */
 }
