@@ -1,30 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class OptionsManager : MonoBehaviour
 {
-    [SerializeField]
-    Slider musicSlider;
-    [SerializeField]
-    GameObject optionsMenu;
+    [SerializeField] private Slider musicSlider;
+
+    [SerializeField] private GameObject optionsMenu;
+
     public AudioClip ButtonHover;
     public AudioClip ButtonPressed;
     public AudioSource Source;
-    void Start()
+
+    private void Start()
     {
         optionsMenu.SetActive(false);
         musicSlider.value = 100;
     }
+
     public void ChangeVolume()
     {
         AudioListener.volume = musicSlider.value;
     }
+
     public void OnHover()
     {
         Source.PlayOneShot(ButtonHover);
     }
+
     public void ExitOptions()
     {
         Source.PlayOneShot(ButtonPressed);

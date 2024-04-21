@@ -1,8 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
 
 public class StartMenu : MonoBehaviour
 {
@@ -10,11 +8,10 @@ public class StartMenu : MonoBehaviour
     public AudioClip StartSFX;
     public AudioClip ButtonHover;
     public AudioClip ButtonPressed;
-    [SerializeField]
-    GameObject optionsMenu;
+    public GameObject OptionsMenu;
     private void Start()
     {
-        optionsMenu.SetActive(false);
+        OptionsMenu.SetActive(false);
     }
     public void OnPlayButton()
     {
@@ -22,34 +19,40 @@ public class StartMenu : MonoBehaviour
         Source.PlayOneShot(StartSFX);
         StartCoroutine(StartScene());
     }
+
     public void OnHover()
     {
         Source.PlayOneShot(ButtonHover);
     }
+
     public void OnOptionsButton()
     {
         Source.PlayOneShot(ButtonPressed);
         StartCoroutine(OpenOptions());
     }
+
     public void OnExitButton()
     {
         Source.PlayOneShot(ButtonPressed);
         StartCoroutine(ExitGame());
     }
+
     //functions
-    IEnumerator StartScene()
+    private IEnumerator StartScene()
     {
         yield return new WaitForSeconds(1f);
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene("level");
     }
-    IEnumerator OpenOptions()
+
+    private IEnumerator OpenOptions()
     {
         yield return new WaitForSeconds(.2f);
-        optionsMenu.SetActive(true);
+        OptionsMenu.SetActive(true);
     }
-    IEnumerator ExitGame()
+
+    private IEnumerator ExitGame()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(.5f);
         Debug.Log("Exited Game");
         Application.Quit();
     }

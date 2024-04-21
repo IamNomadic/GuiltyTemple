@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 
 public class PlayerInputActions : MonoBehaviour
 {
@@ -10,10 +7,15 @@ public class PlayerInputActions : MonoBehaviour
     private PlayerCombat playerCombatController;
     [SerializeField]
     private PauseMenu pauseMenu;
+    private PlayerInputs playerInput;
 
-    PlayerInputs playerInput;
+    // Update is called once per frame
+    private void Update()
+    {
+    }
+
     // Start is called before the first frame update
-    void OnEnable()
+    private void OnEnable()
     {
         playerController = GetComponent<PlayerMovement>();
         playerCombatController = GetComponent<PlayerCombat>();
@@ -30,18 +32,8 @@ public class PlayerInputActions : MonoBehaviour
             playerInput.Player.Dodge.performed += i => playerController.Dodge();
             playerInput.Player.Fire.performed += i => playerCombatController.Attack();
             playerInput.Player.Pause.performed += i => pauseMenu.Pause();
-
-
-
         }
+
         playerInput.Enable();
-
-
-    }
-    
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

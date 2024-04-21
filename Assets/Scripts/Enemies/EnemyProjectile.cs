@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyProjectile : MonoBehaviour
@@ -19,7 +18,7 @@ public class EnemyProjectile : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         rb.velocity = direction * speed;
         if (!GetComponent<Renderer>().isVisible || hit == true)

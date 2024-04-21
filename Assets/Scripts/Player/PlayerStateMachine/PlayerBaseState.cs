@@ -1,13 +1,14 @@
-
 public abstract class PlayerBaseState
 {
     protected PlayerStateMachine _context;
     protected PlayerStateFactory _factory;
+
     public PlayerBaseState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory)
     {
         _context = currentContext;
         _factory = playerStateFactory;
     }
+
     public abstract void EnterState();
     public abstract void UpdateState();
 
@@ -16,9 +17,12 @@ public abstract class PlayerBaseState
     public abstract void CheckSwitchStates();
     public abstract void InitializeSubState();
 
-    void UpdateStates() { }
+    private void UpdateStates()
+    {
+    }
+
     protected void SwitchState(PlayerBaseState newState)
-    { 
+    {
         //current state exits
         ExitState();
 
@@ -28,6 +32,12 @@ public abstract class PlayerBaseState
         //switch current state context
         _context.CurrentState = newState;
     }
-    protected void SetSuperState() { }
-    protected void SetSubState() { }
+
+    protected void SetSuperState()
+    {
+    }
+
+    protected void SetSubState()
+    {
+    }
 }
