@@ -41,7 +41,7 @@ public class StartMenu : MonoBehaviour
     private IEnumerator StartScene()
     {
         yield return new WaitForSeconds(1f);
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene("level");
     }
 
     private IEnumerator OpenOptions()
