@@ -81,7 +81,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5263318199318816680, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
       propertyPath: m_Name
-      value: PlayerObject
+      value: PlayerObject Variant
       objectReference: {fileID: 0}
     - target: {fileID: 5263318199318816680, guid: 42994d34cbad3bc4eafc8bbfaaddcdee, type: 3}
       propertyPath: m_Layer
@@ -287,8 +287,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1066903143
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

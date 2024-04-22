@@ -28,7 +28,6 @@ public class StartMenu : MonoBehaviour
     public void OnOptionsButton()
     {
         Source.PlayOneShot(ButtonPressed);
-        StartCoroutine(OpenOptions());
     }
 
     public void OnExitButton()

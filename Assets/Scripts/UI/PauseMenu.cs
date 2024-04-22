@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -11,12 +10,12 @@ public class PauseMenu : MonoBehaviour
     public AudioClip ButtonHover;
     public AudioClip ButtonPressed;
 
+
     public void Pause()
     {
         if(GameIsPaused)
         {
             ResumeGame();
-        }
         else
             PauseGame();
     }
