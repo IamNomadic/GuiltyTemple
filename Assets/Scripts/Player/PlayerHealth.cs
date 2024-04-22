@@ -58,10 +58,12 @@ public class PlayerHealth : MonoBehaviour
         playerMovement.canMove = true;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, Vector2 direction)
     {
         currentHealth -= damage;
+        Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
         healthText.text = currentHealth.ToString();
+        rb.AddForce(direction * 10000);
         OnPlayerDamaged?.Invoke();
         if (currentHealth <= 0)
         {

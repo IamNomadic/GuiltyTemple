@@ -19,9 +19,8 @@ public class SpikeTrap : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D Player)
     {
-        Player.GetComponent<PlayerHealth>().TakeDamage(1);
+        Vector2 knockbackDirection = (Player.GetComponent<Rigidbody2D>().transform.position - transform.position).normalized;
+        Player.GetComponent<PlayerHealth>().TakeDamage(1, knockbackDirection);
         Rigidbody2D rb = Player.GetComponent<Rigidbody2D>();
-        Vector2 knockbackDirection = (transform.position - rb.transform.position).normalized;
-        rb.velocity = knockbackDirection * -3000;
     }
 }

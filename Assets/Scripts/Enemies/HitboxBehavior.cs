@@ -26,7 +26,8 @@ public class HitboxBehavior : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             Debug.Log("player struck with attack hitbox");
-            collision.gameObject.GetComponent<PlayerHealth>().TakeDamage(GetComponentInParent<Enemy>().damage);
+            Vector2 knockbackDirection = (collision.GetComponent<Rigidbody2D>().transform.position - transform.position).normalized;
+            collision.gameObject.GetComponent<PlayerHealth>().TakeDamage(GetComponentInParent<Enemy>().damage, knockbackDirection);
             GetComponentInParent<Enemy>().HitboxInactive();
         }
     }

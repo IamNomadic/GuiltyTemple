@@ -39,7 +39,8 @@ public class EnemyProjectile : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             hit = true;
-            collision.gameObject.GetComponent<PlayerHealth>().TakeDamage(hitDamage);
+            Vector2 knockbackDirection = (collision.gameObject.GetComponent<Rigidbody2D>().transform.position - transform.position).normalized;
+            collision.gameObject.GetComponent<PlayerHealth>().TakeDamage(hitDamage, knockbackDirection);
         }
 
     }
