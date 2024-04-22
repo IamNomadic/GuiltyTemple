@@ -39,6 +39,9 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected bool isRangedAttacker; //do we have a ranged attack
     [SerializeField] protected EnemyProjectile projectile; //what's our projectile if we're a ranged attacker?
     [SerializeField] protected GameObject projectileSpawn; //where to create the projectile
+    [SerializeField] protected bool multiProjectile; // does this actually fire three projectiles???
+    [SerializeField] protected GameObject projectileSpawn2;
+    [SerializeField] protected GameObject projectileSpawn3;
     [SerializeField] protected float throwForce = 1;
     [SerializeField] protected bool armoredMeleeAttacks;
 
@@ -309,9 +312,21 @@ public class Enemy : MonoBehaviour
             interruptState = true;
         }
 
-        if (canAttack && isMeleeAttacker)
+        if (canAttack && isMeleeAttacker && isRangedAttacker)
+        {
+            if (Random.Range(1, 100) > 50)
+            {
+                MeleeAttack();
+            }
+            else
+            {
+                RangedAttack();
+            }
+        }
+        else if (canAttack && isMeleeAttacker)
             MeleeAttack();
-        else if (canAttack && isRangedAttacker) RangedAttack();
+        else if (canAttack && isRangedAttacker) 
+            RangedAttack();
     }
 
     protected virtual void MeleeAttack()
@@ -361,6 +376,16 @@ public class Enemy : MonoBehaviour
                 yield return new WaitForSeconds(attackWindup);
                 var newProjectile = Instantiate(projectile, newProjLocation.position, new Quaternion(0, 0, 0, 0));
                 newProjectile.BeThrown(throwDirection, throwForce, damage);
+
+                if (multiProjectile) //boss projectile stuff
+                {
+                    var newProjLocation2 = projectileSpawn2.transform;
+                    var newProjLocation3 = projectileSpawn3.transform;
+                    var newProjectile2 = Instantiate(projectile, newProjLocation2.position, new Quaternion(0, 0, 0, 0));
+                    newProjectile2.BeThrown(throwDirection, throwForce, damage);
+                    var newProjectile3 = Instantiate(projectile, newProjLocation3.position, new Quaternion(0, 0, 0, 0));
+                    newProjectile3.BeThrown(throwDirection, throwForce, damage);
+                }
             }
 
             IEnumerator RangedAttackTimer()
