@@ -54,7 +54,7 @@ public class PlayerHealth : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         Debug.Log("called");
         dead = false;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene("StartScreen");
         playerMovement.canMove = true;
     }
 
@@ -77,10 +77,10 @@ public class PlayerHealth : MonoBehaviour
     }
     public void OnCollisionEnter2D (Collision2D DeathBox)
     {
-        Debug.Log("adasa");
+       
        if (DeathBox.gameObject.CompareTag("DeathBox"))
        {
-                Debug.Log("dddddddddddd");
+                Debug.Log("dead");
 
         StartCoroutine("LevelReset");
        }
