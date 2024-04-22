@@ -63,7 +63,7 @@ public class PlayerHealth : MonoBehaviour
         currentHealth -= damage;
         Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
         healthText.text = currentHealth.ToString();
-        rb.AddForce(direction * 10000);
+        rb.velocity = new Vector2(direction.x * 10000, direction.y * 10000);
         OnPlayerDamaged?.Invoke();
         if (currentHealth <= 0)
         {

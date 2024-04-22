@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2480885706885489455}
   - component: {fileID: 1460242988701053167}
   - component: {fileID: 7475393416059651105}
+  - component: {fileID: 2271876429228762216}
   m_Layer: 11
   m_Name: WitchProjectile
   m_TagString: Enemy Projectile
@@ -76,7 +77,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 006a3adba8ff95144b4e779daa84bb7e, type: 3}
+  m_Sprite: {fileID: 350333880, guid: 528d10e4952d7bb4c9a2e86a470d3cc3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -137,3 +138,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   deathTime: 0.1
+--- !u!95 &2271876429228762216
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8644961761969740789}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 4bc6863bf51144643ae08bd087d0c0be, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

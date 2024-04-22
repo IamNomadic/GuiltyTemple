@@ -40,6 +40,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected EnemyProjectile projectile; //what's our projectile if we're a ranged attacker?
     [SerializeField] protected GameObject projectileSpawn; //where to create the projectile
     [SerializeField] protected float throwForce = 1;
+    [SerializeField] protected bool armoredMeleeAttacks;
 
     #endregion
 
@@ -299,7 +300,15 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Attack()
     {
-        interruptState = true;
+        if (armoredMeleeAttacks)
+        {
+            interruptState = false;
+        }
+        else
+        {
+            interruptState = true;
+        }
+
         if (canAttack && isMeleeAttacker)
             MeleeAttack();
         else if (canAttack && isRangedAttacker) RangedAttack();
@@ -374,8 +383,7 @@ public class Enemy : MonoBehaviour
         //ouch
         animator.Play("Struck");
         interruptState = false;
-        Vector2 knockbackDirection = (playerObject.GetComponent<Rigidbody2D>().transform.position - transform.position)
-            .normalized; //figure out where to push them back
+        Vector2 knockbackDirection = (playerObject.GetComponent<Rigidbody2D>().transform.position - transform.position).normalized; //figure out where to push them back
         //rb.AddForce(knockbackDirection * -2f);   
         if (!shoved) //are we actually moving?
         {
