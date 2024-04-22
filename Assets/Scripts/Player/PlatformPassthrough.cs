@@ -8,14 +8,13 @@ public class PlatformPassthrough : MonoBehaviour
      * to use this, attach this script to the player and fill in playerCollider /w the existing player object.
      * then, set up the passthrough platform with a "Platform Effector 2D", check "Use One Way", and on the Box Collider 2D, check "Used By Effector".
      */
-    [SerializeField] private BoxCollider2D playerCollider;
+    [SerializeField] private Collider2D playerCollider;
 
     private GameObject currentPlatform;
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode
-                .S)) //I know this isn't ideal but I haven't touched the input parser for this whole project, I forget how it works >:V
+        if (Input.GetKeyDown(KeyCode.S)) //I know this isn't ideal but I haven't touched the input parser for this whole project, I forget how it works >:V
             if (currentPlatform != null)
                 StartCoroutine(PassThrough());
     }
