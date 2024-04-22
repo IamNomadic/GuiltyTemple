@@ -171,21 +171,21 @@ MonoBehaviour:
   isMeleeAttacker: 1
   isRangedAttacker: 1
   projectile: {fileID: 7475393416059651105, guid: bc6443bb209babd49895aaab2c44956a, type: 3}
-  projectileSpawn: {fileID: 4735654068791399325}
-  multiProjectile: 0
-  projectileSpawn2: {fileID: 0}
-  projectileSpawn3: {fileID: 0}
+  projectileSpawn: {fileID: 1868285689323219743}
+  multiProjectile: 1
+  projectileSpawn2: {fileID: 5348818455987330371}
+  projectileSpawn3: {fileID: 825856188214819869}
   throwForce: 3
   armoredMeleeAttacks: 1
   damage: 3
   attackWindup: 0
   attackCooldown: 2
   moveSpeed: 0.5
-  attackRange: 0.6
+  attackRange: 0.4
   patrolA: {fileID: 0}
   patrolB: {fileID: 0}
   patrolSpeed: 0.5
-  detectionRange: 2
+  detectionRange: 9
   colliderDistance: 0.24
   playerLayer:
     serializedVersion: 2
