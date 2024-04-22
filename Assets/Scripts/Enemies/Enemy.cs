@@ -21,7 +21,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected Animator animator;
     [SerializeField] protected int enemyMaxHealth;
 
-    protected int enemyCurrentHealth;
+    [SerializeField] protected int enemyCurrentHealth;
     protected BoxCollider2D enemyCollider; //gotta check if any of these need to be culled when I'm done here
     protected Rigidbody2D rb;
 
@@ -56,6 +56,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected float moveSpeed = 1;
     protected bool canAttack = true;
     [SerializeField] protected float attackRange = 0.3f; //start swinging at this range
+    [SerializeField] protected float rangedAttackRange = 3.0f;
     protected bool hitboxActive; //this is going to link to the animator trigger to link the active hitbox to the animation
     protected bool attackLanded; //check if this attack has connected so it doesn't stack
 
@@ -272,8 +273,7 @@ public class Enemy : MonoBehaviour
         //monk time
         //
         CheckFacing();
-        if (Mathf.Abs(playerTarget.position.x - rb.transform.position.x) < attackRange &&
-            canAttack) //swing within out attack range
+        if (Mathf.Abs(playerTarget.position.x - rb.transform.position.x) < attackRange && canAttack) //swing within out attack range
             nextState = Behavior.attack;
         interruptState = true;
         playerTarget = playerObject.GetComponent<Rigidbody2D>().transform;
@@ -303,7 +303,13 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Attack()
     {
-        if (armoredMeleeAttacks)
+        if (enemyCurrentHealth <= 0)
+        {
+            StopAllCoroutines();
+            nextState = Behavior.die;
+            isStateFinished = true;
+        }
+        if (armoredMeleeAttacks && enemyCurrentHealth > 0)
         {
             interruptState = false;
         }
@@ -344,8 +350,7 @@ public class Enemy : MonoBehaviour
             {
                 //Debug.Log("attack timer started");
                 yield return
-                    new WaitForSeconds(
-                        attackCooldown); //transmit damage to the player here when the player state machine is done
+                    new WaitForSeconds(attackCooldown); //transmit damage to the player here when the player state machine is done
                 //hbSprite.color = Color.white;
                 if (nextState != Behavior.die && nextState != Behavior.dying)
                 {
@@ -483,7 +488,11 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(int damage)
     {
         //Debug.Log("damage");
-        if (!inKnockback)
+        if (armoredMeleeAttacks == true && currentState == Behavior.attack)
+        {
+            enemyCurrentHealth -= damage;
+        }
+        else if (!inKnockback)
         {
             inKnockback = true; //make sure we're not dealing damage multiple times with one swing
             enemyCurrentHealth -= damage; //deal the damage
