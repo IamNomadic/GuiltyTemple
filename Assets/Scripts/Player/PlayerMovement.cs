@@ -40,11 +40,12 @@ public class PlayerMovement : MonoBehaviour
         #region Transform Cooldown and DeTransformation
 
         //transform cooldown increment
-        if (cooldown > 0) cooldown = cooldown - Time.deltaTime;
+        if (wCooldown > 0) wCooldown = wCooldown - Time.deltaTime;
+        if (vCooldown > 0) vCooldown = vCooldown - Time.deltaTime;
 
         //checks your form and the cooldown and automatically detransition you
-        if (cooldown <= 0 && VTransformed) VDetrans();
-        if (cooldown <= 0 && WTransformed) WDetrans();
+        if (vCooldown <= 0 && VTransformed) VDetrans();
+        if (vCooldown <= 0 && WTransformed) WDetrans();
 
         #endregion
 
@@ -274,7 +275,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void VTransform()
     {
-        if (cooldown <= 0)
+        if (vCooldown <= 0)
         {
             StartCoroutine(VTransforming());
             // transforms correct
@@ -284,7 +285,8 @@ public class PlayerMovement : MonoBehaviour
             canMove = false;
             Debug.Log("Vtransform");
             animator.Play("Transform");
-            cooldown = vCooldown;
+            vCooldown = vCooldownBase;
+            wCooldown = vCooldownBase;
             //vampire movment values
             playerHealth.maxHealth = vHP;
             walkSpeed = vWalkSpeed;
@@ -303,7 +305,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void WTransform()
     {
-        if (cooldown <= 0)
+        if (wCooldown <= 0)
         {
             StartCoroutine(WTransforming());
             // transforms correct
@@ -313,7 +315,8 @@ public class PlayerMovement : MonoBehaviour
             canMove = false;
             Debug.Log("Wtransform");
             animator.Play("Transform 0");
-            cooldown = wCooldown;
+            wCooldown = wCooldownBase;
+            vCooldown = wCooldownBase;
             //wolf movement values
             playerHealth.maxHealth = wHP;
             walkSpeed = wWalkSpeed;
@@ -346,7 +349,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float vJumpPower;
     [SerializeField] private float vDodgeSpeed;
     [SerializeField] private float vAttackRange;
-    [SerializeField] private float vCooldown;
+    [SerializeField] public float vCooldown;
+    [SerializeField] private float vCooldownBase;
 
     [Header("Wolf")]
     //Wolf Character values
@@ -357,7 +361,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float wJumpPower;
     [SerializeField] private float wDodgeSpeed;
     [SerializeField] private float wAttackRange;
-    [SerializeField] private float wCooldown;
+    [SerializeField] public float wCooldown;
+    [SerializeField] private float wCooldownBase;
 
     [Header("Human")]
     //Base Characer values
