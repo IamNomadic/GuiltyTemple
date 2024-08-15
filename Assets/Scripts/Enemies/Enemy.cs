@@ -221,7 +221,7 @@ public class Enemy : MonoBehaviour
 
         if (!isFlier && !animator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) //set our idle, flying or not
             animator.Play("Idle");
-        if (isFlier && !animator.GetCurrentAnimatorStateInfo(0).IsName("Fly")) animator.Play("Fly");
+        //if (isFlier && !animator.GetCurrentAnimatorStateInfo(0).IsName("Fly")) animator.Play("Fly");
 
 
         if (PlayerInSight()) //scanning area

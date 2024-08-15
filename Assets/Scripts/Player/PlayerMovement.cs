@@ -386,7 +386,7 @@ public class PlayerMovement : MonoBehaviour
 
     private float horizontal;
     private float vertical;
-    private float walkSpeed = 2f;
+    public float walkSpeed = 2f;
     private float jumpPower = 4f;
     private float dodgeSpeed = 7f;
     private bool dodgeAvailable = true;
