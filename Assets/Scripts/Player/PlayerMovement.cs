@@ -225,50 +225,56 @@ public class PlayerMovement : MonoBehaviour
 
     public void VDetrans()
     {
-        canMove = false;
-        VTransformed = false;
-
-        animator.Play("VDetrans");
-        //Base form values
-        playerHealth.maxHealth = hHP;
-
-        walkSpeed = hWalkSpeed;
-        jumpPower = hJumpPower;
-        dodgeSpeed = hDodgeSpeed;
-        playerCombat.attackRange = hAttackRange;
-        HTransformed = true;
-        playerCombat.isAttacking = false;
-        StartCoroutine(VDetrans());
-
-        IEnumerator VDetrans()
+        if (!WTransformed)
         {
-            yield return new WaitForSeconds(0.55f);
-            canMove = true;
-            OnPlayerDamaged?.Invoke();
+            canMove = false;
+            VTransformed = false;
+
+            animator.Play("VDetrans");
+            //Base form values
+            playerHealth.maxHealth = hHP;
+
+            walkSpeed = hWalkSpeed;
+            jumpPower = hJumpPower;
+            dodgeSpeed = hDodgeSpeed;
+            playerCombat.attackRange = hAttackRange;
+            HTransformed = true;
+            playerCombat.isAttacking = false;
+            StartCoroutine(VDetrans());
+
+            IEnumerator VDetrans()
+            {
+                yield return new WaitForSeconds(0.55f);
+                canMove = true;
+                OnPlayerDamaged?.Invoke();
+            }
         }
     }
 
     public void WDetrans()
     {
-        WTransformed = false;
-        canMove = false;
-
-        animator.Play("WDetrans");
-        //Base form values
-        playerHealth.maxHealth = hHP;
-        walkSpeed = hWalkSpeed;
-        jumpPower = hJumpPower;
-        dodgeSpeed = hDodgeSpeed;
-        playerCombat.attackRange = hAttackRange;
-        HTransformed = true;
-        playerCombat.isAttacking = false;
-        StartCoroutine(WDetrans());
-
-        IEnumerator WDetrans()
+        if (!VTransformed)
         {
-            yield return new WaitForSeconds(0.55f);
-            canMove = true;
-            OnPlayerDamaged?.Invoke();
+            WTransformed = false;
+            canMove = false;
+
+            animator.Play("WDetrans");
+            //Base form values
+            playerHealth.maxHealth = hHP;
+            walkSpeed = hWalkSpeed;
+            jumpPower = hJumpPower;
+            dodgeSpeed = hDodgeSpeed;
+            playerCombat.attackRange = hAttackRange;
+            HTransformed = true;
+            playerCombat.isAttacking = false;
+            StartCoroutine(WDetrans());
+
+            IEnumerator WDetrans()
+            {
+                yield return new WaitForSeconds(0.55f);
+                canMove = true;
+                OnPlayerDamaged?.Invoke();
+            }
         }
     }
 
@@ -286,7 +292,7 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("Vtransform");
             animator.Play("Transform");
             vCooldown = vCooldownBase;
-            wCooldown = vCooldownBase;
+            
             //vampire movment values
             playerHealth.maxHealth = vHP;
             walkSpeed = vWalkSpeed;
@@ -316,7 +322,7 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("Wtransform");
             animator.Play("Transform 0");
             wCooldown = wCooldownBase;
-            vCooldown = wCooldownBase;
+            
             //wolf movement values
             playerHealth.maxHealth = wHP;
             walkSpeed = wWalkSpeed;
