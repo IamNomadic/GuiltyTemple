@@ -47,8 +47,8 @@ public class PlayerCombat : MonoBehaviour
                 Debug.Log(enemy.name + " was hit.");
                 enemy.SendMessage("TakeDamage", playerATKDamage);
                 //enemy.GetComponent<Enemy>().TakeDamage(playerATKDamage);
-                pM.vCooldown = pM.vCooldown--;
-                pM.wCooldown = pM.wCooldown--;
+                pM.vCooldown = pM.vCooldown -5;
+                pM.wCooldown = pM.wCooldown -5;
                 if (pM.VTransformed && pH.currentHealth < pH.maxHealth)
                 {
                     pH.currentHealth += 1;
